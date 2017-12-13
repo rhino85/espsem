@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<title>surface semantique</title>
+	<script src="jquery.js"></script>
+	<link rel="stylesheet" type="text/css" href="style.css">
+	<script type="text/javascript" src="paper-full.js"></script>
+</head>
+<body>
+	<div id="lists">
+		<div id="syns"> </div>
+		<div id="cliques"></div>
+	</div>
+	<div id="ui">
+		<div id="SelectXAxis">Axe Horizontal : 
+			<select id="axe1">
+  				<option value="0" selected>1</option> 
+  				<option value="1">2</option>
+  				<option value="2">3</option>
+  				<option value="3">4</option> 
+  				<option value="4">5</option>
+  				<option value="5">6</option>
+			</select> 
+		</div>
+		<div id="SelectYAxis">Axe Vertical :
+			<select id="axe2">
+  				<option value="0">1</option> 
+  				<option value="1" selected>2</option>
+  				<option value="2">3</option>
+  				<option value="3">4</option> 
+  				<option value="4">5</option>
+  				<option value="5">6</option>
+			</select>
+		</div>
+		<input id="word" type="text" value="bois">
+		<button id="hidecli">cacher cliques</button>
+		<button id="hidelink">cacher cliques</button>
+
+	</div>
+	<canvas id="canvas"></canvas>
+	<script type="text/javascript">
+	window.onload = function() {
+
+		
+		var canvas = document.getElementById('canvas');
+		canvas.width  = window.innerWidth*0.75;
+		canvas.height = window.innerHeight*0.85;
+		paper.setup(canvas);
+		paper.view.translate(paper.view.center);
+		paper.view.onClick = function(event) {
+			//new rectangle view :
+			if(event.target==paper.view){
+
+				this.scale(1.25, event.point);
+				for (var i = 0; i < paper.project.activeLayer.children.length; i++) {
+					paper.project.activeLayer.children[i].scale(0.8);
+				}
+			}
+    	}
+
+		paper.view.onMouseDrag = function(event) {
+			/*reflechir au zoom :
+			utiliser le zoom de paper JS ?
+				probleme : agrandit la vue, (càd les points etc...)
+			creer une fonction de zoom, qui translate les coordonnées dans le plan ?
+				seems better (y)
+			*/
+			if(event.target==paper.view){
+				this.scale(1.25, event.point);
+				for (var i = 0; i < paper.project.activeLayer.children.length; i++) {
+					paper.project.activeLayer.children[i].scale(0.8);
+				}
+			}
+    		
+
+		}
+		var cliques, syns, coords, cliVisible = true;
+		var extremevalues = [0, 0, 0, 0, 0, 0];
+
+		var axe1 = document.getElementById('axe1');
+		var axe2 = document.getElementById('axe2');
+
+		$('#axe1').change(function(){
+			updateAxis();
+		});
+		$('#axe2').change(function(){
+			updateAxis();
+		});
+
+		$('#hidecli').click(function(){
+			if($('#hidecli').text() == "cacher cliques"){
+				$('#hidecli').text("montrer cliques");
+				cliVisible = false;
+				for (var i = 0; i < cliques.length; i++) {
+					cliques[i].circle.visible = false;
+				}
+			}else{
+				$('#hidecli').text("cacher cliques");
+				cliVisible = true;
+				for (var i = 0; i < cliques.length; i++) {
+					cliques[i].circle.visible = true;
+				}
+			}
+		})
+
+
+		$.ajax({
+       		url : 'data',
+       		type : 'GET',
+       		dataType : 'text',
+       		success : espsem,
+			error : function(resultat, statut, erreur){
+       		console.log("can't get data from serveur");
+       		}
+		});
+
+		function updateAxis(){
+			var x = $('#axe1').val();
+			var y = $('#axe2').val();
+			console.log(x, y);
+			for (var i = 0; i < cliques.length; i++) {
+				cliques[i].setAxis(x, y);
+			}
+			for (var i = 0; i < cliques.length; i++) {
+				syns[i].setAxis(x, y);
+			}
+
+		}
+
+		function Syn(asyn, i){
+
+				//degradé de vert en fonction des états d'un mot
+				this.normalColor = new paper.Color(0, 0.7, 0);
+				this.snapColor = new paper.Color(0, 0.5, 0);
+				this.selectedColor = new paper.Color(0, 0.35, 0);
+
+
+				this.index = i;
+           		this.mot = asyn;
+           		this.coords = coords[i + cliques.length];  //
+           		this.cliques = []; 
+           		this.clicked=false;
+           		
+           		this.point = new paper.Point(0,0);
+
+           		this.circle = new paper.Path.Circle(this.point, 3);
+           		this.circle.fillColor = this.normalColor;
+           		
+				this.text = new paper.PointText(new paper.Point(this.point.x, this.point.y - 50/paper.view.zoom));
+           		this.text.visible = false;
+				this.text.justification = 'center';
+				this.text.fillColor = this.normalColor;
+				this.text.fontSize = 15;
+				this.text.content = this.mot;
+				
+				let b = new paper.Rectangle(this.text.bounds);;
+				b.width = b.width*1.1;
+				this.rectangle = new paper.Path.Rectangle(b);
+				this.rectangle.strokeColor = this.snapColor;
+				this.rectangle.visible = false;
+
+				let a = new paper.Point(this.text.bounds.bottom, this.text.bounds.left)
+           		this.linkPointText = new paper.Path.Line(this.circle.position, a);
+           		this.linkPointText.strokeColor = this.snapColor;
+				this.linkPointText.visible = false;
+				
+           		this.label = new paper.Group([this.text, this.rectangle]);
+				
+				this.paths = [];
+				
+           		
+           		
+
+           		this.html = $("<div class='syn' id='" + this.i + "''>" + this.mot + "</div>").appendTo("#syns");
+           		
+           		this.show = function(){
+					this.linkPointText.visible = true;
+					this.text.visible = true;
+					this.text.fillColor = this.snapColor;
+					this.circle.fillColor = this.snapColor;
+					this.linkPointText.firstSegment.point = this.circle.position;
+					let a = new paper.Point(this.text.bounds.left, this.text.bounds.bottom);
+					this.rectangle.position = this.text.position;
+					this.rectangle.visible = true;
+					this.linkPointText.lastSegment.point = a;
+    				this.linkPointText.strokeColor = this.snapColor;
+					this.linkPointText.strokeWidth = 1/paper.view.zoom;
+					this.label.visible = true;
+				}.bind(this);
+				this.hide = function(){
+					this.linkPointText.visible = false;
+					this.text.fillColor = this.snapColor;
+					this.circle.fillColor = this.normalColor;
+					this.linkPointText.strokeColor = this.snapColor;
+					this.text.visible = false;
+					this.rectangle.visible = false;
+				}
+
+				this.select = function(){
+					$(".syn").css("font-weight","Normal")
+					this.html.css("font-weight","Bold");
+					$("#cliques").html("");
+					$("#cliques").append("cliques de " + this.mot + " :");
+					for (var i = 0; i < this.cliques.length; i++) {
+						var html = "<div class='clique' id="+this.cliques[i]+">";
+						for (var j = 0; j < this.cliques[i].mots.length; j++) {
+							html = html + this.cliques[i].mots[j].mot + ', ';
+						}
+						html = html + "</div>";
+						$("#cliques").append(html);
+					}
+					this.show();
+					this.circle.fillColor = this.selectedColor;
+					this.text.fillColor = this.selectedColor;
+					this.rectangle.strokeColor=this.selectedColor;
+					this.clicked = true;
+				}.bind(this);
+
+				this.unselect = function(event){
+					this.clicked=false;
+					this.hide();
+					this.html.css("font-weight","Normal");
+					$("#cliques").html("");
+				}.bind(this);
+
+				this.linkWithCliques = function(thickness){
+
+					//à faire : fonction pour trouver le polygone correspondant
+					
+					for (var i = 0; i < this.cliques.length; i++) {
+						let a = new paper.Path.Line(this.point, this.cliques[i].point);
+						this.cliques[i].circle.visible = true;
+						a.strokeColor = 'black';
+						a.strokeWidth = thickness/paper.view.zoom;
+						this.paths.push(a);
+					}
+				}.bind(this);
+				this.unLinkWithCliques = function(){
+					for (var i = 0; i < this.paths.length; i++) {
+						this.paths[i].remove();
+					}
+					for (var i = 0; i < this.cliques.length; i++) {
+						this.cliques[i].circle.visible = cliVisible;
+					}
+				}
+
+				this.circle.onMouseEnter = function(){
+					this.show();
+					this.linkWithCliques(0.2);
+				}.bind(this);
+
+				this.circle.onMouseLeave = function(event){
+				if(!this.clicked){
+					this.hide();
+					this.unLinkWithCliques();
+				}
+				}.bind(this);
+				
+				this.circle.onClick = function(event){
+					if(this.clicked){
+						this.unselect();
+						this.unLinkWithCliques();
+					}
+					else{
+						this.select();
+						if (cliVisible){
+							this.linkWithCliques(1);
+						}
+						
+					}
+				}.bind(this);
+
+				this.text.onClick = function(event){
+					if(event.delta.x == 0 && event.delta.y == 0){
+						if(this.clicked){
+							this.unselect();
+							this.unLinkWithCliques();
+						}
+						else{
+							this.select();
+							this.linkWithCliques();
+						}
+					}
+				}.bind(this);
+
+				this.html.click(function(){
+					if(this.clicked){
+						this.unselect();
+						this.unLinkWithCliques();
+					}
+					else{
+						this.select();
+						this.linkWithCliques();
+					}						
+				}.bind(this));
+
+				this.html.mouseenter(function(){
+					this.show();
+					this.linkWithCliques(0.2);					
+				}.bind(this));
+
+				this.html.mouseleave(function(){
+					this.hide();
+					this.unLinkWithCliques();					
+				}.bind(this));
+
+				this.label.onMouseDrag = function(event) {
+           			this.label.position.x += event.delta.x;
+    				this.label.position.y += event.delta.y;
+					this.linkPointText.firstSegment.point = this.circle.position;
+					let a = new paper.Point(this.text.bounds.left, this.text.bounds.bottom);
+					//this.text.rectangle.position = this.text.position;
+					this.linkPointText.lastSegment.point = a;
+    				this.linkPointText.strokeColor = this.selectedColor;
+					this.linkPointText.strokeWidth = 1/paper.view.zoom;
+					
+				}.bind(this);
+
+				this.setAxis = function(x, y){
+						this.unLinkWithCliques();
+						this.point.x = 0.4*this.coords[x]*paper.view.bounds.width/extremevalues[x];
+						this.point.y = 0.4*this.coords[y]*paper.view.bounds.height/extremevalues[y];
+						this.circle.position = this.point;
+						this.label.position = this.point;
+						this.linkWithCliques(0.1);
+
+				}
+
+		}
+
+
+
+		function Cli(clique, i){
+				this.gray = new paper.Color(0.5);
+				this.index = i;
+				this.mots = cliques[i];
+				for (var i = 0; i < this.mots.length; i++) {
+					this.mots[i]= syns[this.mots[i] - 1];
+				}
+				this.clicked = false;
+				this.coords = coords[this.index];
+           		this.point = new paper.Point(0,0);
+
+
+				this.circle = new paper.Path.Circle(this.point, 3);
+           		this.circle.strokeWidth = 0;
+           		this.circle.fillColor = this.gray;
+
+           		this.show = function() {
+           			if(!this.clicked){
+						this.circle.fillColor = "black";
+						for (var i = 0; i < this.mots.length; i++) {
+							this.mots[i].show();
+							this.mots[i].linkWithCliques(0.2);
+						}
+					}
+           		}.bind(this);
+
+
+				this.circle.onMouseEnter = function(event){
+					this.show();
+				}.bind(this);
+				this.circle.onMouseLeave = function(event){
+				if(!this.clicked){
+					this.circle.fillColor = this.gray;
+					for (var i = 0; i < this.mots.length; i++) {
+						if(!this.mots[i].clicked)
+						{
+							this.mots[i].hide();
+						}
+					}
+				}
+				}.bind(this);
+				this.circle.onClick = function(event){
+					if(this.clicked){
+						this.clicked = false;
+						for (var i = 0; i < this.mots.length; i++) {
+							this.mots[i].hide();
+						}
+					}else{
+						this.circle.fillColor = "black";
+						this.clicked = true;
+						for (var i = 0; i < this.mots.length; i++) {
+							this.mots[i].show();
+						}
+					}
+				}.bind(this);
+				this.setAxis = function(x, y){
+
+						this.point.x = 0.4*this.coords[x]*paper.view.bounds.width/extremevalues[x];
+						this.point.y = 0.4*this.coords[y]*paper.view.bounds.height/extremevalues[y];
+						this.circle.position = this.point;
+
+				}.bind(this);
+
+		}
+
+		function espsem(data, statut){
+			
+			data = JSON.parse(data);
+			cliques = data.result.cliques;
+			syns = data.result.synonymes;
+			coords = data.result.coordonnees;
+			getExtremsCoords();
+			
+			//initialise les objets Syn
+			for (var i = 0; i < syns.length; i++) {
+						syns[i] = new Syn(syns[i], i);
+			}
+			//initialise les objets Cli
+			for (var i = 0; i < cliques.length; i++) {
+						cliques[i] = new Cli(cliques[i], i);
+			}
+			
+			//lie les object Syn aux objets Cli
+			for (var i = 0; i < syns.length; i++) {
+				for (var j = 0; j < cliques.length; j++) {
+           			for (var k = 0; k < cliques[j].mots.length; k++) {
+           				if (cliques[j].mots[k]==syns[i]){
+           					syns[i].cliques.push(cliques[j]);
+           				}
+           			}
+           		}
+			}
+			for (var i = 0; i < syns.length; i++) {
+				syns[i].setAxis(0,1);
+			}
+			for (var i = 0; i < cliques.length; i++) {
+				cliques[i].setAxis(0,1);
+			}
+
+			
+		}
+
+
+		function getExtremsCoords(){
+			for (var i = 0; i < 6; i++) {
+				for (var j = 0; j < coords.length; j++) {
+					if (Math.abs(coords[j][i])>extremevalues[i]){
+						extremevalues[i] = Math.abs(coords[j][i]);
+					}
+				}
+			}
+		}
+		
+		paper.view.onFrame = function(event) {
+
+		}
+	}
+    </script>
+</body>
+</html>
+
+

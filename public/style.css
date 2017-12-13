@@ -1,0 +1,115 @@
+body{
+	margin: 0;
+	padding: 0;
+}
+
+#lists{
+	position: absolute;
+	width: 25%;
+	height: 100%;
+	top:0;
+	padding: 0;
+	margin: 0;
+
+}
+#syns{
+	overflow-y: scroll;
+	position: absolute;
+	height: 100%;
+	width: 40%;
+	left: 0;
+}
+#cliques{
+	overflow-y: scroll;
+	position: absolute;
+	height: 100%;
+	width: 60%;
+	right: 0;
+}
+
+.syn{
+	position: static;
+	padding-top: 5px;
+	text-align: center;
+}
+
+.clique{
+	overflow-x: visible;
+	width: 60%;
+	border-bottom-style: solid;
+	border-bottom-width: 1px;
+	position: static;
+	padding-top: 4px;
+	padding-bottom: 4px;
+	margin-left: 20%;
+	text-align: center;
+}
+
+#canvas{
+	position: absolute;
+	left:25%;
+	top: 15%;
+	padding: 0;
+	margin: 0;
+
+}
+
+#ui{
+	position: absolute;
+	width: 75%;
+	height: 14%;
+	left: 25%;
+	top:0;
+	padding: 0;
+	margin: 0;
+	border-bottom: 1px solid black;
+}
+#SelectAxis{
+	position: absolute;
+	width: 20%;
+	height: 75%;
+	left: 0%;
+	top:0%;
+}
+#SelectXAxis{
+	position: absolute;
+	top:25%;
+	right:0%;
+}
+#SelectYAxis{
+	position: absolute;
+	top:50%;
+	right:0%;
+}
+
+
+
+
+#Hidecli{
+	position: absolute;
+	top:75%;
+	right:0%;
+}
+
+#Showalllinks{
+	position: absolute;
+	top:100%;
+	right:0%;
+}
+
+#word{
+	position: absolute;
+	width: 33%;
+	height: 33%;
+	left: 33%;
+	bottom:33%;
+	font-size: 2em;
+}
+
+
+#SelectTool{
+	position: absolute;
+	right: 15%;
+	top:50%;
+}
+
