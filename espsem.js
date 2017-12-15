@@ -21,7 +21,7 @@ function readFiles(next){
         if (err) throw err;
         cliques = data.split('\n');
         cliques.pop();
-        for (let i = 0; i < cliques.length; i++) {
+        for (var i = 0; i < cliques.length; i++) {
           cliques[i] = cliques[i].split(",");
         }
         
@@ -29,8 +29,8 @@ function readFiles(next){
 
           if (err) throw err;
           coordonnees = data.split('\n');
-          for (var i = 0; i < coordonnees.length; i++) {
-            coordonnees[i] = coordonnees[i].split(" ");
+          for (var j = 0; j < coordonnees.length; j++) {
+            coordonnees[j] = coordonnees[j].split(" ");
           }
           next({synonymes, cliques, coordonnees});
         });
