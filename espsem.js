@@ -3,6 +3,7 @@ var express = require('express');
 var app = express();
 var http = require('http');
 var httpserver = http.Server(app);
+var decode = require('urldecode')
 var fs = require('fs');
 var windows1252 = require('windows-1252');
 app.use(express.static('public'));
@@ -139,7 +140,9 @@ readFiles(function(result){
   	req = req.originalUrl.split("/");
   	
   	req = req[req.length - 1];
-  	//console.log(req);
+    req = decode(req);
+
+  	console.log(req);
   	//console.log(dico.get(req));
 
     res.json(dico.get(req));
