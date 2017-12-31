@@ -64,38 +64,15 @@
 
 		
 		var canvas = document.getElementById('canvas');
-		canvas.width  = window.innerWidth*0.75;
-		canvas.height = window.innerHeight*0.85;
-		paper.setup(canvas);
-		paper.view.translate(paper.view.center);
-
-		var background = new paper.Path.Rectangle(paper.view.bounds);
-		background.fillColor = "White";
-
-		function updateLinks() {
-			for (var i = 0; i < syns.length; i++) {
-				syns[i].unLinkWithCliques()
-				if(syns[i].clicked){
-					//syns[i].linkWithCliques(1);
-					syns[i].enveloppeCli()
-
-				}else{
-					if(allLinkVisible){
-						syns[i].linkWithCliques(0.1);
-					}
-				}
-				
-			}
-			for (var i = 0; i < cliques.length; i++) {
-				cliques[i].unLinkWithWords();
-				if(cliques[i].clicked){
-					cliques[i].linkWithWords(1);
-				}
-			}
-		}
-
-		
-		background.onMouseDown = function(event) {
+			canvas.width  = window.innerWidth*0.75;
+			canvas.height = window.innerHeight*0.85;
+			paper.setup(canvas);
+		function init(){
+			
+			paper.view.translate(paper.view.center);
+			var background = new paper.Path.Rectangle(paper.view.bounds);
+			background.fillColor = "White";
+			background.onMouseDown = function(event) {
 			console.log("euh");
 			switch($('#Tool').val()) {
     		case "zoomIn":
@@ -145,6 +122,32 @@
 				paper.view.center.y += event.delta.y;
 			}
 		}*/
+		}
+
+		function updateLinks() {
+			for (var i = 0; i < syns.length; i++) {
+				syns[i].unLinkWithCliques()
+				if(syns[i].clicked){
+					//syns[i].linkWithCliques(1);
+					syns[i].enveloppeCli()
+
+				}else{
+					if(allLinkVisible){
+						syns[i].linkWithCliques(0.1);
+					}
+				}
+				
+			}
+			for (var i = 0; i < cliques.length; i++) {
+				cliques[i].unLinkWithWords();
+				if(cliques[i].clicked){
+					cliques[i].linkWithWords(1);
+				}
+			}
+		}
+
+		
+		
     	
 		var cliques, syns, coords;
 		var extremevalues = [0, 0, 0, 0, 0, 0];
@@ -192,10 +195,23 @@
 		})
 
 		
+		$(document).keypress(function(e) {
 
+			if(e.which == 13) {
+				$.ajax({
+       		url : 'data/'+$("#word").val(),
+       		type : 'GET',
+       		dataType : 'text',
+       		success : espsem,
+			error : function(resultat, statut, erreur){
+       		console.log("can't get data from serveur");
+       		}
+		});
+			}
+		});
 
 		$.ajax({
-       		url : 'data',
+       		url : 'data/bois',
        		type : 'GET',
        		dataType : 'text',
        		success : espsem,
@@ -555,7 +571,12 @@
 				this.index = i;
 				this.mots = clique;
 				for (var i = 0; i < this.mots.length; i++) {
-					this.mots[i]= syns[this.mots[i] - 1];
+					for (var j = 0; j < syns.length; j++) {
+
+						if(this.mots[i] == syns[j].mot){
+							this.mots[i]= syns[j];
+						}
+					}
 				}
 				this.clicked = false;
 				this.coords = coords[this.index];
@@ -658,8 +679,7 @@
            		this.linkWithWords = function(thickness){
            			console.log(this);
            			for (var i = 0; i < this.mots.length; i++) {
-           				console.log(i);
-           				console.log(this.mots[i]);
+           				
            				let a = new paper.Path.Line(this.point, this.mots[i].point);
 						a.strokeColor = 'black';
 						a.strokeWidth = thickness;
@@ -712,13 +732,28 @@
 
 		}
 
+		function clearpage(){
+			syns = null;
+			cliques = null;
+			coords=null;
+			paper.project.clear();
+			$("#cliques").html("");
+			$("#syns").html("");
+			$('#axe1').val(0);
+			$('#axe2').val(1);
+		}
+
 		function espsem(data, statut){
+			//netoyer la page avant d'ajouter les nouvelles données
+			clearpage();
+			init();
+
 			
 			data = JSON.parse(data);
-			cliques = data.result.cliques;
-			console.log(data.result.cliques);
-			syns = data.result.synonymes;
-			coords = data.result.coordonnees;
+			cliques = data.cliques;
+			console.log(data);
+			syns = data.synonymes;
+			coords = data.coords;
 			getExtremsCoords();
 			
 			//initialise les objets Syn
@@ -740,7 +775,7 @@
            			}
            		}
 			}
-			console.log(cliques, syns);
+			//console.log(cliques, syns);
 			for (var i = 0; i < syns.length; i++) {
 				syns[i].setAxis(0,1);
 			}

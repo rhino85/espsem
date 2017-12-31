@@ -6,40 +6,115 @@ var httpserver = http.Server(app);
 var fs = require('fs');
 var windows1252 = require('windows-1252');
 app.use(express.static('public'));
+var dico;
 
 function readFiles(next){
-    var synonymes, cliques, coordonnees;
-    fs.readFile('171019_154123_90.syn', function(err, data) {  
+    
+    fs.readFile('dicovisu_171204.new', function(err, data) {  
       
       if (err) throw err;
       data = data.toString('binary');
-      synonymes = windows1252.decode(data);
-      synonymes = synonymes.split('\n');
+      data = windows1252.decode(data);
+      data = data.split('\n');
       
-      fs.readFile('171019_154123_90.cli', 'utf8', function(err, data) {
+      for (var i = 0; i < data.length; i++) {
+      	data[i] = data[i].split(':');
+      	if(data[i][1] != undefined){
+      		data[i][1] = data[i][1].split(',');
+      		data[i][1].push(data[i][0]);
+      		data[i][1].sort();
+      	}else{
+      		data[i][1] = "";
+      	}
 
+      }
+
+      console.log(data[0]);
+      dico = new Map(data);
+      data= null;
+
+      fs.readFile("indexclic_171204.visu",  function(err, data2) {
         if (err) throw err;
-        cliques = data.split('\n');
-        cliques.pop();
-        for (var i = 0; i < cliques.length; i++) {
-          cliques[i] = cliques[i].split(",");
+        data2 = data2.toString('binary');
+        data2 = windows1252.decode(data2);
+        data2 = data2.split('\n');
+        for (var j = 0; j < data2.length; j++) {
+          data2[j] = data2[j].split(",");
+          dico.set(data2[j][0], {
+          	mot : data2[j][0],
+           	synonymes : dico.get(data2[j][0]),
+           	nbClic : data2[j][1],
+           	indexClic : data2[j][2],
+          });
         }
-        
-        fs.readFile('171019_154123_90.jva', 'utf8', function(err, data) {
-
+        data2=null;
+        console.log(dico.get('dieu'));
+		fs.readFile("clicmemo_171204.visu",  function(err, data3) {
+      		
           if (err) throw err;
-          coordonnees = data.split('\n');
-          for (var j = 0; j < coordonnees.length; j++) {
-            coordonnees[j] = coordonnees[j].split(" ");
+          data3 = data3.toString('binary');
+          data3 = windows1252.decode(data3);
+          var splice;
+          var cliques;
+          dico.forEach(function(valeur, clé) {
+          	splice = data3.substr(valeur.indexClic);
+          	cliques = splice.split('\n', valeur.nbClic);
+          	splice=null;
+          	for (var i = 0; i < cliques.length; i++) {
+          		cliques[i] = cliques[i].split(",");
+          	}
+          	valeur.cliques = cliques;
+          });
+          splice=null;
+          data3=null;
+          
+          //console.log(dico.get('dieu'));
+		fs.readFile("indexacp_171204.extr",  function(err, data4) {
+      		
+         if (err) throw err;
+          data4 = data4.toString('binary');
+          data4 = windows1252.decode(data4);
+          data4 = data4.split('\n');
+          for (var j = 0; j < data4.length; j++) {
+            data4[j] = data4[j].split(",");
+            var a = dico.get(data4[j][0]);
+            a.coordPos = data4[j][2];
+            a.coordNbLine = data4[j][1]
+            dico.set(data4[j][0], a);
           }
-          next({synonymes, cliques, coordonnees});
+          data4=null;
+          //console.log(dico.get('dieu'));
+          fs.readFile("acpmemo_171204.extr",  function(err, data5) {
+      		console.log("ok");
+          if (err) throw err;
+          data5 = data5.toString('binary');
+          console.log("ok2");
+          var splice;
+          var coords;
+          dico.forEach(function(valeur, clé) {
+          	splice = data5.substr(valeur.coordPos);
+          	coords = splice.split('\n', valeur.coordNbLine);
+          	for (var i = 0; i < coords.length; i++) {
+          		coords[i]= coords[i].split(',');
+          	}
+          	splice=null;
+          	valeur.coords = coords;
+          });
+          data5=null;
+         console.log(dico.get('bois'));
+          next(dico);
+      	});
         });
-      });
+        });
+        });
+      //console.log(dico.get('Académie française'));
+    
     });
 }
 
 readFiles(function(result){
 
+	//console.log(result);
   //binds words with their coords :
   /*for (var i = 0; i < result.synonymes.length; i++) {
     result.synonymes[i] =  {
@@ -60,8 +135,14 @@ readFiles(function(result){
     result.cliques[i] = clique;
   }*/
 
-  app.get('/data', function (req, res) {
-    res.json({result});
+  app.get('/data/*', function (req, res) {
+  	req = req.originalUrl.split("/");
+  	
+  	req = req[req.length - 1];
+  	//console.log(req);
+  	//console.log(dico.get(req));
+
+    res.json(dico.get(req));
   });
 });
 
