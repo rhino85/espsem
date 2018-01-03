@@ -1,17 +1,16 @@
 {
-  "name": "chat",
+  "name": "espsem",
   "version": "1.0.0",
-  "description": "wiki test",
-  "main": "index.js",
+  "description": "espsem",
+  "main": "espsem.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
+  "author": "arthur baty",
   "license": "ISC",
   "dependencies": {
     "express": "^4.13.3",
-    "request": "^2.83.0",
-    "socket.io": "^1.3.7",
+    "pug": "^2.0.0-rc.4",
     "urldecode": "^1.0.1",
     "windows-1252": "^1.0.0"
   },
