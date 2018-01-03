@@ -30,7 +30,7 @@ function readFiles(next){
 
       }
 
-      console.log(data[0]);
+      //console.log(data[0]);
       dico = new Map(data);
       data= null;
 
@@ -49,7 +49,7 @@ function readFiles(next){
           });
         }
         data2=null;
-        console.log(dico.get('dieu'));
+        console.log("loading...");
 		fs.readFile("clicmemo_171204.visu",  function(err, data3) {
       		
           if (err) throw err;
@@ -86,10 +86,8 @@ function readFiles(next){
           data4=null;
           //console.log(dico.get('dieu'));
           fs.readFile("acpmemo_171204.extr",  function(err, data5) {
-      		console.log("ok");
-          if (err) throw err;
+      		if (err) throw err;
           data5 = data5.toString('binary');
-          console.log("ok2");
           var splice;
           var coords;
           dico.forEach(function(valeur, clé) {
@@ -102,7 +100,7 @@ function readFiles(next){
           	valeur.coords = coords;
           });
           data5=null;
-         console.log(dico.get('bois'));
+         console.log("ok");
           next(dico);
       	});
         });
@@ -150,26 +148,7 @@ readFiles(function(result){
 });
 
 app.get('/', function (req, res) {
-  var options = {
-    root: __dirname + '/',
-    dotfiles: 'deny',
-    headers: {
-      'x-timestamp': Date.now(),
-      'x-sent': true
-    }
-  };
-  res.sendFile('espsem.html', options, function(err){
-    if (err) {
-      console.log(err);
-      res.status(err.status).end();
-    }
-    else {
-      console.log('Sent');
-    }
-  });
-});
-
-app.get('/2', function (req, res) {
+  //console.log(req);
   var options = {
     root: __dirname + '/',
     dotfiles: 'deny',
@@ -179,26 +158,6 @@ app.get('/2', function (req, res) {
     }
   };
   res.sendFile('espsem2.html', options, function(err){
-    if (err) {
-      console.log(err);
-      res.status(err.status).end();
-    }
-    else {
-      console.log('Sent');
-    }
-  });
-});
-
-app.get('/3', function (req, res) {
-  var options = {
-    root: __dirname + '/',
-    dotfiles: 'deny',
-    headers: {
-      'x-timestamp': Date.now(),
-      'x-sent': true
-    }
-  };
-  res.sendFile('espsem3.html', options, function(err){
     if (err) {
       console.log(err);
       res.status(err.status).end();
