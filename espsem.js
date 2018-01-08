@@ -7,6 +7,9 @@ var decode = require('urldecode')
 var fs = require('fs');
 var windows1252 = require('windows-1252');
 app.use(express.static('public'));
+app.set('views', './views')
+app.set('view engine', 'pug')
+
 var dico;
 
 function readFiles(next){
@@ -19,14 +22,14 @@ function readFiles(next){
       data = data.split('\n');
       
       for (var i = 0; i < data.length; i++) {
-      	data[i] = data[i].split(':');
-      	if(data[i][1] != undefined){
-      		data[i][1] = data[i][1].split(',');
-      		data[i][1].push(data[i][0]);
-      		data[i][1].sort();
-      	}else{
-      		data[i][1] = "";
-      	}
+        data[i] = data[i].split(':');
+        if(data[i][1] != undefined){
+          data[i][1] = data[i][1].split(',');
+          data[i][1].push(data[i][0]);
+          data[i][1].sort();
+        }else{
+          data[i][1] = "";
+        }
 
       }
 
@@ -42,36 +45,36 @@ function readFiles(next){
         for (var j = 0; j < data2.length; j++) {
           data2[j] = data2[j].split(",");
           dico.set(data2[j][0], {
-          	mot : data2[j][0],
-           	synonymes : dico.get(data2[j][0]),
-           	nbClic : data2[j][1],
-           	indexClic : data2[j][2],
+            mot : data2[j][0],
+            synonymes : dico.get(data2[j][0]),
+            nbClic : data2[j][1],
+            indexClic : data2[j][2],
           });
         }
         data2=null;
         console.log("loading...");
-		fs.readFile("clicmemo_171204.visu",  function(err, data3) {
-      		
+    fs.readFile("clicmemo_171204.visu",  function(err, data3) {
+          
           if (err) throw err;
           data3 = data3.toString('binary');
           data3 = windows1252.decode(data3);
           var splice;
           var cliques;
           dico.forEach(function(valeur, clé) {
-          	splice = data3.substr(valeur.indexClic);
-          	cliques = splice.split('\n', valeur.nbClic);
-          	splice=null;
-          	for (var i = 0; i < cliques.length; i++) {
-          		cliques[i] = cliques[i].split(",");
-          	}
-          	valeur.cliques = cliques;
+            splice = data3.substr(valeur.indexClic);
+            cliques = splice.split('\n', valeur.nbClic);
+            splice=null;
+            for (var i = 0; i < cliques.length; i++) {
+              cliques[i] = cliques[i].split(",");
+            }
+            valeur.cliques = cliques;
           });
           splice=null;
           data3=null;
           
           //console.log(dico.get('dieu'));
-		fs.readFile("indexacp_171204.extr",  function(err, data4) {
-      		
+    fs.readFile("indexacp_171204.extr",  function(err, data4) {
+          
          if (err) throw err;
           data4 = data4.toString('binary');
           data4 = windows1252.decode(data4);
@@ -86,23 +89,23 @@ function readFiles(next){
           data4=null;
           //console.log(dico.get('dieu'));
           fs.readFile("acpmemo_171204.extr",  function(err, data5) {
-      		if (err) throw err;
+          if (err) throw err;
           data5 = data5.toString('binary');
           var splice;
           var coords;
           dico.forEach(function(valeur, clé) {
-          	splice = data5.substr(valeur.coordPos);
-          	coords = splice.split('\n', valeur.coordNbLine);
-          	for (var i = 0; i < coords.length; i++) {
-          		coords[i]= coords[i].split(',');
-          	}
-          	splice=null;
-          	valeur.coords = coords;
+            splice = data5.substr(valeur.coordPos);
+            coords = splice.split('\n', valeur.coordNbLine);
+            for (var i = 0; i < coords.length; i++) {
+              coords[i]= coords[i].split(',');
+            }
+            splice=null;
+            valeur.coords = coords;
           });
           data5=null;
          console.log("ok");
           next(dico);
-      	});
+        });
         });
         });
         });
@@ -113,7 +116,7 @@ function readFiles(next){
 
 readFiles(function(result){
 
-	//console.log(result);
+  //console.log(result);
   //binds words with their coords :
   /*for (var i = 0; i < result.synonymes.length; i++) {
     result.synonymes[i] =  {
@@ -134,39 +137,29 @@ readFiles(function(result){
     result.cliques[i] = clique;
   }*/
 
-  app.get('/data/*', function (req, res) {
-  	req = req.originalUrl.split("/");
-  	
-  	req = req[req.length - 1];
-    req = decode(req);
+  
+});
 
-  	console.log(req);
-  	//console.log(dico.get(req));
+app.get('/data/*', function (req, res) {
+    
+
+    req = req.originalUrl.split("/");
+    req = req[req.length - 1];
+    req = decode(req);
+    console.log(req);
 
     res.json(dico.get(req));
   });
+app.get('/*', function (req, res) {
+  
+  req = req.originalUrl.split("/");
+  req = req[req.length - 1];
+  req = decode(req);
+  
+  res.render('espsem', {word : req});
 });
 
-app.get('/', function (req, res) {
-  //console.log(req);
-  var options = {
-    root: __dirname + '/',
-    dotfiles: 'deny',
-    headers: {
-      'x-timestamp': Date.now(),
-      'x-sent': true
-    }
-  };
-  res.sendFile('espsem2.html', options, function(err){
-    if (err) {
-      console.log(err);
-      res.status(err.status).end();
-    }
-    else {
-      console.log('Sent');
-    }
-  });
-});
+
 
 httpserver.listen(8084, 'localhost', function () {
   

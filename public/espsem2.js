@@ -68,11 +68,13 @@ window.onload = function() {
 				if(syns[i].clicked){
 					//syns[i].linkWithCliques(1);
 					syns[i].enveloppeCli()
+
 				}else{
 					if(allLinkVisible){
 						syns[i].linkWithCliques(0.1);
 					}
 				}
+				
 			}
 			for (var i = 0; i < cliques.length; i++) {
 				cliques[i].unLinkWithWords();
@@ -135,17 +137,12 @@ window.onload = function() {
 					{
 						allAreasVisible = true;
 						for (var i = 0; i < syns.length; i++) {
-							if(!syns[i].clicked){
-								syns[i].enveloppeCli();
-							}
+							syns[i].enveloppeCli();
 						}
 					}else{
 						allAreasVisible = false;
 						for (var i = 0; i < syns.length; i++) {
-							if(!syns[i].clicked){
-								syns[i].enveloppe.remove();
-							}
-							
+							syns[i].enveloppe.remove();
 						}
 					}
 				})
@@ -347,12 +344,12 @@ window.onload = function() {
 				if(!this.clicked){
 					this.circle.scale(0.666);
 					this.hide();
-					if(!allAreasVisible){
-						this.enveloppe.remove();
-					}
 					if(allLinkVisible){
 						this.unLinkWithCliques();
 						this.linkWithCliques(0.1);
+						this.enveloppe.remove();
+					}else{
+						this.enveloppe.remove();
 					}
 				}
 				}.bind(this);
@@ -374,15 +371,10 @@ window.onload = function() {
 							this.enveloppe = new paper.Path(enveloppePoints);
 							this.enveloppe.smooth({ type: 'catmull-rom' });
 							this.enveloppe.closed = true;
-							
 						
 						
 					}
-					for (var i = 0; i < this.cliques.length; i++) {
-						//this.cliques[i].show();
-					}
-					/*this.enveloppe.fillColor = new paper.Color(1,0,0,0.1);
-					this.enveloppe.blendMode = 'multiply';*/
+					
 					this.enveloppe.strokeColor = "red";
 					this.enveloppe.strokeWidth = 1;
 					
@@ -411,10 +403,7 @@ window.onload = function() {
 				}.bind(this);
 
 				this.text.onMouseLeave = function(event){
-					if(!showallAreas){
-						this.enveloppe.remove();
-					}
-					
+					this.enveloppe.remove();
 				}.bind(this);
 				
 				this.text.onClick = function(event){
