@@ -9,10 +9,17 @@ html
     script(type="text/javascript" src="grahamScan.js")
   body
     #lists
-      #syns  
+      #syns
+        #syntitle 
+          p(id=1) SYNONYMES 
+        #synlist
       #cliques
+        #clititle 
+          p CLIQUES DE :
+          #clispan
+        #clilist
     #ui
-      #SelectAxis
+      #Select
         #SelectXAxis
           | Axe Horizontal : 
           select#axe1
@@ -31,6 +38,14 @@ html
             option(value="3") 4
             option(value="4") 5
             option(value="5") 6
+        #SelectTool
+          | Navigation :
+          select#Tool
+            option(value="none" selected="") aucun
+            option(value="zoomIn") zoomer
+            option(value="zoomOut") dézoomer
+            option(value="Move") déplacer
+      #Checkboxes
         #Hidecli
           | Cacher les Cliques : 
           input#hidecli(type="checkbox")
@@ -38,15 +53,11 @@ html
           | Montrer tout les Liens : 
           input#showalllink(type="checkbox")
         #ShowallAreas
-          | Montrer toutes les enveloppes : 
+          | Montrer toutes les enveloppes :
           input#showallAreas(type="checkbox")
+      #motvedette 
+        | MOT VEDETTE :
       input#word(type="text" value= word)
-      #SelectTool
-        | Navigation
-        select#Tool
-          option(value="none" selected="") aucun
-          option(value="zoomIn") zoomer
-          option(value="zoomOut") dézoomer
-          option(value="Move") déplacer
+      
     canvas#canvas
     script(type="text/javascript" src="espsem.js")

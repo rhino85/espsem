@@ -3,51 +3,11 @@ body{
 	padding: 0;
 }
 
-#lists{
-	position: absolute;
-	width: 25%;
-	height: 100%;
-	top:0;
-	padding: 0;
-	margin: 0;
 
-}
-#syns{
-	overflow-y: scroll;
-	position: absolute;
-	height: 100%;
-	width: 40%;
-	left: 0;
-}
-#cliques{
-	overflow-y: scroll;
-	position: absolute;
-	height: 100%;
-	width: 60%;
-	right: 0;
-}
-
-.syn{
-	position: static;
-	padding-top: 5px;
-	text-align: center;
-}
-
-.clique{
-	overflow-x: visible;
-	width: 60%;
-	border-bottom-style: solid;
-	border-bottom-width: 1px;
-	position: static;
-	padding-top: 4px;
-	padding-bottom: 4px;
-	margin-left: 20%;
-	text-align: center;
-}
 
 #canvas{
 	position: absolute;
-	left:25%;
+	left:26%;
 	top: 15%;
 	padding: 0;
 	margin: 0;
@@ -62,13 +22,14 @@ body{
 	top:0;
 	padding: 0;
 	margin: 0;
-	border-bottom: 1px solid black;
+	border-bottom: 2px solid black;
+	border-left: 1px solid;
 }
-#SelectAxis{
+#Select{
 	position: absolute;
+	right: 15%;
 	width: 20%;
-	height: 75%;
-	left: 0%;
+	height: 100%;
 	top:0%;
 }
 #SelectXAxis{
@@ -82,19 +43,31 @@ body{
 	right:0%;
 }
 
+#SelectTool{
+	position: absolute;
+	right: 0;
+	top:75%;
+}
 
-
-
+#Checkboxes{
+	position: absolute;
+	width: 33%;
+	height: 100%;
+	left: 5%;
+	top:0;
+}
 #Hidecli{
 	position: absolute;
-	top:75%;
-	right:0%;
+	top:25%;
 }
 
 #Showalllinks{
 	position: absolute;
-	top:100%;
-	right:0%;
+	top:50%;
+}
+#ShowallAreas{
+	position: absolute;
+	top:75%;
 }
 
 #word{
@@ -102,14 +75,132 @@ body{
 	width: 33%;
 	height: 33%;
 	left: 33%;
-	bottom:33%;
+	bottom:20%;
 	font-size: 2em;
 }
-
-
-#SelectTool{
+#motvedette{
 	position: absolute;
-	right: 15%;
-	top:50%;
+	width: 33%;
+	height: 33%;
+	left: 33%;
+	bottom:50%;
+	font-size: 1em;
 }
+
+
+#lists{
+	position: absolute;
+	width: 25%;
+	height: 100%;
+	top:0;
+	padding: 0;
+	margin: 0;
+	border-right: 2px solid;
+
+}
+#syns{
+	position: absolute;
+	top:0;
+	height: 100%;
+	width: 35%;
+	left: 0;
+}
+#cliques{
+	position: absolute;
+	top:0;
+	height: 100%;
+	width: 65%;
+	right: 0;
+}
+
+.syn{
+	position: relative;
+	padding-top: 5px;
+	width: 100%;
+	text-align: center;
+	}
+
+.clique{
+	position: relative;
+	padding-top: 10px;
+	padding-bottom: 5px;
+	text-align: center;
+	width: 100%;
+	border-top: 0px;
+	border-bottom: 1px;
+	border-right: 0;
+	border-left: 0;
+	border-style: solid;
+}
+
+.syn>input{
+	position: relative;
+	left:10%;
+}
+.syn>span{
+	position: relative;
+	
+}
+
+#synlist{
+	overflow-y: scroll;
+	position: absolute;
+	top: 14%;
+	width: 100%;
+	max-height: 86%;
+	left: 0;
+	border-top: 1px;
+	border-right: 1px;
+	border-left: 0;
+	border-bottom: 0px;
+	border-style: solid;
+}
+
+#syntitle{
+	position: absolute;
+	width: 100%;
+	height: 14%;
+	text-align: center;
+	border-right: 1px solid;
+
+
+}
+
+#clilist{
+	overflow-y: scroll;
+	position: relative;
+	width: 100%;
+	max-height: 86%;
+	left: 0;
+	border-top: 1px;
+	border-right: 1px;
+	border-left: 0;
+	border-bottom: 0px;
+	border-style: solid;
+}
+
+#clititle{
+	position: relative;
+	width: 100%;
+	height: 14%;
+	text-align: center;
+
+}
+
+#clispan{
+	position: absolute;
+	width: 100%;
+	text-align: center;
+	bottom: 25%;
+}
+
+p{
+	position: absolute;
+	width: 100%;
+	bottom: 50%;
+	text-align: center;
+	margin: 0;
+	padding-top: 10%;
+}
+
 

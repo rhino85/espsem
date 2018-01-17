@@ -2,8 +2,8 @@ window.onload = function() {
 
 		
 		var canvas = document.getElementById('canvas');
-			canvas.width  = window.innerWidth*0.75;
-			canvas.height = window.innerHeight*0.85;
+			canvas.width  = window.innerWidth*0.70;
+			canvas.height = window.innerHeight*0.80;
 			paper.setup(canvas);
 		function init(){
 			
@@ -14,36 +14,32 @@ window.onload = function() {
 			console.log("euh");
 			switch($('#Tool').val()) {
     		case "zoomIn":
-    		console.log("hey");
         		paper.view.center = event.point;
-
-    			for (var i = 0; i < syns.length; i++) {
-    				let x2 = syns[i].point.x*1.4 //+ zoomA.x;
-    				let y2 = syns[i].point.y*1.4 //+ zoomA.y;
+				for (var i = 0; i < syns.length; i++) {
+    				let x2 = syns[i].point.x*1.4;
+    				let y2 = syns[i].point.y*1.4;
     				syns[i].setCoordinates(x2, y2);
     			}
     			for (var i = 0; i < cliques.length; i++) {
-    				let x2 = cliques[i].point.x*1.4 //+ zoomA.x;
-    				let y2 = cliques[i].point.y*1.4 //+ zoomA.y;
+    				let x2 = cliques[i].point.x*1.4;
+    				let y2 = cliques[i].point.y*1.4;
     				cliques[i].setCoordinates(x2, y2);
     			}
-    			updateLinks();
         	break;
     		case "zoomOut":
     		console.log("tac");
         		paper.view.center = event.point;
     			for (var i = 0; i < syns.length; i++) {
-    				let x2 = syns[i].point.x*0.7 //+ zoomA.x;
-    				let y2 = syns[i].point.y*0.7 //+ zoomA.y;
+    				let x2 = syns[i].point.x*0.7;
+    				let y2 = syns[i].point.y*0.7 ;
     				syns[i].setCoordinates(x2, y2);
     			}
     			for (var i = 0; i < cliques.length; i++) {
-    				let x2 = cliques[i].point.x*0.7 //+ zoomA.x;
-    				let y2 = cliques[i].point.y*0.7 //+ zoomA.y;
+    				let x2 = cliques[i].point.x*0.7;
+    				let y2 = cliques[i].point.y*0.7;
     				cliques[i].setCoordinates(x2, y2);
     			}
-    			updateLinks();
-       		break;
+    		break;
        		case "Move":
         		paper.view.center = event.point;
        		break;
@@ -51,6 +47,7 @@ window.onload = function() {
         		//code block
 			}
 			background.position = paper.view.center;
+			updateView();
     	}
 		/*background.onMouseDrag = function(event) {
 			console.log("toc");
@@ -62,22 +59,38 @@ window.onload = function() {
 		}*/
 		}
 
-		function updateLinks() {
-			for (var i = 0; i < syns.length; i++) {
-				syns[i].unLinkWithCliques()
-				if(syns[i].clicked){
-					//syns[i].linkWithCliques(1);
-					syns[i].enveloppeCli()
-				}else{
-					if(allLinkVisible){
-						syns[i].linkWithCliques(0.1);
+		function updateView() {
+			if(allAreasVisible){
+				for (var i = 0; i < syns.length; i++) {
+					if(!syns[i].clicked){
+						syns[i].enveloppeCli();
 					}
 				}
 			}
-			for (var i = 0; i < cliques.length; i++) {
-				cliques[i].unLinkWithWords();
-				if(cliques[i].clicked){
-					cliques[i].linkWithWords(1);
+			else{
+				for (var i = 0; i < syns.length; i++) {
+					if(syns[i].clicked){
+						syns[i].enveloppeCli();
+					}
+				}
+			}
+			if(allLinkVisible){
+				for (var i = 0; i < cliques.length; i++) {
+					cliques[i].unLinkWithWords();
+					if(!cliques[i].clicked){
+						cliques[i].linkWithWords(0.1);
+					}
+					else{
+						cliques[i].linkWithWords(1);
+					}
+				}
+			}
+			else{
+				for (var i = 0; i < cliques.length; i++) {
+					cliques[i].unLinkWithWords();
+					if(cliques[i].clicked){
+						cliques[i].linkWithWords(1);
+					}
 				}
 			}
 		}
@@ -120,13 +133,19 @@ window.onload = function() {
 			if($('#showalllink').is(":checked"))
 			{
 				allLinkVisible = true;
-				for (var i = 0; i < syns.length; i++) {
-					syns[i].linkWithCliques(0.1);
+				for (var i = 0; i < cliques.length; i++) {
+					if(!cliques[i].clicked){
+						cliques[i].linkWithWords(0.1);
+					}
+					
 				}
 			}else{
 				allLinkVisible = false;
-				for (var i = 0; i < syns.length; i++) {
-					syns[i].unLinkWithCliques();
+				for (var i = 0; i < cliques.length; i++) {
+					if(!cliques[i].clicked){
+						cliques[i].unLinkWithWords();
+					}
+					
 				}
 			}
 		})
@@ -186,7 +205,7 @@ window.onload = function() {
 			for (var i = 0; i < syns.length; i++) {
 				syns[i].setAxis(x, y);
 			}
-			updateLinks();
+			updateView();
 
 		}
 
@@ -236,9 +255,12 @@ window.onload = function() {
 				
            		
            		
-
-           		this.html = $("<div class='syn' id='" + this.i + "''>" + this.mot + "</div>").appendTo("#syns");
-           		this.checkbox = $("<input id="+this.i+" type='checkbox'>").appendTo(this.html);
+				//this.html = $("<div class='syn' id='" + this.i + "''>" + this.mot + "</div>").appendTo("#syns");
+				
+           		this.html = $("<div class='syn' id='" + this.index + "'></div>").appendTo("#synlist");
+           		//this.checkbox = $("<input id='"+this.index+"' type='checkbox' checked>").appendTo(this.html);
+           		this.span = $("<span id='" + this.index + "'>" + this.mot + "</span>").appendTo(this.html);
+           		
            		this.show = function(){
 					
 					this.text.position = new paper.Point(this.point.x, this.point.y - 30);
@@ -260,15 +282,18 @@ window.onload = function() {
 				}.bind(this);
 
 				this.showCliquesHtml = function(){
-					$("#cliques").html("");
-					$("#cliques").append("cliques de " + this.mot + " :");
+
+					$("#clilist").html("");
+					$("#clispan").html("");
+					$("#clispan").append(this.mot);
+					
 					for (var i = 0; i < this.cliques.length; i++) {
 						var html = "<div class='clique' id="+this.cliques[i]+">";
 						for (var j = 0; j < this.cliques[i].mots.length; j++) {
 							html = html + this.cliques[i].mots[j].mot + ', ';
 						}
 						html = html + "</div>";
-						$("#cliques").append(html);
+						$("#clilist").append(html);
 					}
 				}.bind(this);
 
@@ -283,7 +308,7 @@ window.onload = function() {
 				}
 
 				this.select = function(){
-					this.html.css("font-weight","Bold");
+					this.span.css("font-weight","Bold");
 					this.circle.fillColor = this.selectedColor;
 					this.text.fillColor = this.selectedColor;
 					this.rectangle.strokeColor=this.selectedColor;
@@ -292,8 +317,8 @@ window.onload = function() {
 
 				this.unselect = function(event){
 					
-					this.html.css("font-weight","Normal");
-					$("#cliques").html("");
+					this.span.css("font-weight","Normal");
+					$("#clilist").html("");
 				}.bind(this);
 
 				this.linkWithCliques = function(thickness){
@@ -390,7 +415,6 @@ window.onload = function() {
 				}.bind(this);
 
 				this.circle.onClick = function(event){
-					//console.log(this.clicked);
 					if(this.clicked){
 						this.clicked=false;
 						this.unselect();
@@ -406,21 +430,22 @@ window.onload = function() {
 					}
 				}.bind(this);
 
-				this.text.onMouseEnter = function(){
+				this.label.onMouseEnter = function(){
 					this.showCliquesHtml();
 				}.bind(this);
 
-				this.text.onMouseLeave = function(event){
+				this.label.onMouseLeave = function(event){
 					if(!showallAreas){
 						this.enveloppe.remove();
 					}
 					
 				}.bind(this);
 				
-				this.text.onClick = function(event){
+				this.label.onClick = function(event){
 					if(event.delta.x == 0 && event.delta.y == 0){
 						if(this.clicked){
 							this.clicked=false;
+							this.hide();
 							this.unselect();
 							this.circle.scale(0.666);
 							this.enveloppe.remove();
@@ -431,44 +456,6 @@ window.onload = function() {
 					
 					}
 				}.bind(this);
-
-				this.html.click(function(){
-					if(this.clicked){
-						this.clicked=false;
-						this.unselect();
-						this.enveloppe.remove();
-						if(allLinkVisible){
-							this.linkWithCliques(0.1);
-						}
-					}
-					else{
-						this.clicked = true;
-						this.select();
-						//this.enveloppeCli();
-					}						
-				}.bind(this));
-
-				this.html.mouseenter(function(){
-					if(!this.clicked){
-						this.show();
-						this.showCliquesHtml();
-						//this.linkWithCliques(0.5);
-						this.enveloppeCli();
-						this.circle.scale(1.5);
-					}			
-				}.bind(this));
-
-				this.html.mouseleave(function(){
-					if(!this.clicked){
-					this.circle.scale(0.666);
-					this.hide();
-					this.enveloppe.remove();
-					if(allLinkVisible){
-						this.unLinkWithCliques();
-						this.linkWithCliques(0.1);
-					}
-				}		
-				}.bind(this));
 
 				this.label.onMouseDrag = function(event) {
            			this.label.position.x += event.delta.x;
@@ -485,17 +472,54 @@ window.onload = function() {
     				this.linkPointText.strokeColor = this.selectedColor;
 					this.linkPointText.strokeWidth = 1;
 				}
+
+				this.span.click(function(){
+					if(this.clicked){
+						this.clicked=false;
+						this.unselect();
+						this.enveloppe.remove();
+					}
+					else{
+						this.clicked = true;
+						this.select();
+						//this.enveloppeCli();
+					}						
+				}.bind(this));
+
+				this.span.mouseenter(function(){
+					if(!this.clicked){
+						this.show();
+						this.showCliquesHtml();
+						//this.linkWithCliques(0.5);
+						this.enveloppeCli();
+						this.circle.scale(1.5);
+					}			
+				}.bind(this));
+
+				this.span.mouseleave(function(){
+					if(!this.clicked){
+					this.circle.scale(0.666);
+					this.hide();
+					this.enveloppe.remove();
+					if(allLinkVisible){
+						//this.unLinkWithCliques();
+						//this.linkWithCliques(0.1);
+					}
+				}		
+				}.bind(this));
+
+				
 				
 
 				this.setAxis = function(x, y){
-						
-						this.setCoordinates(0.4*this.coords[x]*paper.view.bounds.width/extremevalues[x], 0.4*this.coords[y]*paper.view.bounds.height/extremevalues[y]);
+						x = 0.4*this.coords[x]*paper.view.bounds.width/extremevalues[x];
+						y = 0.4*this.coords[y]*paper.view.bounds.height/extremevalues[y];
+						this.setCoordinates(x, y);
 				}.bind(this);
 
 				this.setCoordinates = function(x, y){
-					this.point.x =x;
+					this.point.x = x;
 					this.point.y = y;
-					//console.log(this.point.x, this.point.y);
 					
 					this.circle.position = this.point;
 					this.text.position = new paper.Point(this.point.x, this.point.y - 30);
@@ -505,12 +529,9 @@ window.onload = function() {
 					if(this.enveloppe != undefined){
 						this.enveloppe.remove();
 					}
-					
-					
 					if(this.clicked){
 						this.show();
 						this.select();
-						//this.enveloppeCli();
 					}
 					
 
@@ -613,6 +634,18 @@ window.onload = function() {
 					
 				}.bind(this);
 
+				this.label.onClick = function(event) {
+					if(event.delta.x == 0 && event.delta.y == 0){
+						this.clicked = false;
+						this.hide();
+						this.text.visible = false;
+						this.unLinkWithWords();
+						if(allLinkVisible){
+							this.linkWithWords(0.1);
+						}
+					}
+           		}.bind(this);
+
            		this.updateLabel= function(){
 					this.linkPointText.firstSegment.point = this.point;
 					let a = new paper.Point(this.text.bounds.left, this.text.bounds.bottom);
@@ -643,7 +676,7 @@ window.onload = function() {
 						this.paths.push(a);
            			}
            		}.bind(this);
-           		this.unLinkWithWords = function(thickness){
+           		this.unLinkWithWords = function(){
            			for (var i = 0; i < this.paths.length; i++) {
 						this.paths[i].remove();
 					}
@@ -654,22 +687,25 @@ window.onload = function() {
            				this.show();
 						this.linkWithWords(0.5);
            			}
-					
-					//this.text.visible = true;
 				}.bind(this);
 				this.pointt.onMouseLeave = function(event){
-				if(!this.clicked){
-					this.hide();
-					this.text.visible = false;
-					this.unLinkWithWords();
-				}
+					if(!this.clicked){
+						this.hide();
+						this.text.visible = false;
+						this.unLinkWithWords();
+						if(allLinkVisible){
+							this.linkWithWords(0.1);
+						}
+					}
+				
 				}.bind(this);
 				this.pointt.onClick = function(event){
 					if(this.clicked){
 						this.clicked = false;
-
-						//this.linkWithWords(1);
+						this.unLinkWithWords();
+						this.linkWithWords(0.5);
 					}else{
+						this.linkWithWords(1);
 						this.clicked = true;
 					}
 					
@@ -683,6 +719,7 @@ window.onload = function() {
 					this.point.x = x;
 					this.point.y = y;
 					this.updateLabel();
+					this.unLinkWithWords();
 					this.pointt.position = this.point;
 					this.pointt.visible = true;
 				}
@@ -694,8 +731,8 @@ window.onload = function() {
 			cliques = null;
 			coords=null;
 			paper.project.clear();
-			$("#cliques").html("");
-			$("#syns").html("");
+			$("#clilist").html("");
+			$("#synlist").html("");
 			$('#axe1').val(0);
 			$('#axe2').val(1);
 		}
@@ -745,6 +782,7 @@ window.onload = function() {
 
 
 		function getExtremsCoords(){
+			extremevalues = [0, 0, 0, 0, 0, 0];
 			for (var i = 0; i < 6; i++) {
 				for (var j = 0; j < coords.length; j++) {
 					if (Math.abs(coords[j][i])>extremevalues[i]){
