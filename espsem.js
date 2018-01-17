@@ -144,9 +144,10 @@ app.get('/data/*', function (req, res) {
     
 
     req = req.originalUrl.split("/");
+    console.log(req);
     req = req[req.length - 1];
     req = decode(req);
-    console.log(req);
+    
 
     res.json(dico.get(req));
   });
@@ -154,6 +155,10 @@ app.get('/*', function (req, res) {
   
   req = req.originalUrl.split("/");
   req = req[req.length - 1];
+  console.log(req);
+  if(req==""){
+    req = 'mot';
+  }
   req = decode(req);
   
   res.render('espsem', {word : req});

@@ -84,7 +84,7 @@ body{
 	height: 33%;
 	left: 33%;
 	bottom:50%;
-	font-size: 1em;
+	font-size: 1.3em;
 }
 
 
@@ -192,6 +192,7 @@ body{
 	width: 100%;
 	text-align: center;
 	bottom: 25%;
+	font-size: 2em;
 }
 
 p{
