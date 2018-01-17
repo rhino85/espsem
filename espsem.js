@@ -154,8 +154,8 @@ app.get('/data/*', function (req, res) {
 app.get('/*', function (req, res) {
   
   req = req.originalUrl.split("/");
-  req = req[req.length - 1];
   console.log(req);
+  req = req[req.length - 1];
   if(req==""){
     req = 'mot';
   }
