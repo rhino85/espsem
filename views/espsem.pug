@@ -46,15 +46,18 @@ html
             option(value="zoomOut") dézoomer
             option(value="Move") déplacer
       #Checkboxes
-        #Hidecli
-          | Cacher les Cliques : 
-          input#hidecli(type="checkbox")
+        #Showcli
+          | Montrer les Cliques : 
+          input#showcli(type="checkbox")
         #Showalllinks
           | Montrer tout les Liens : 
           input#showalllink(type="checkbox")
         #ShowallAreas
-          | Montrer toutes les enveloppes :
+          | Montrer toutes les Enveloppes :
           input#showallAreas(type="checkbox")
+        #ShowAreas
+          | Montrer les Enveloppes :
+          input#showAreas(type="checkbox")
       #motvedette 
         | MOT VEDETTE :
       input#word(type="text" value= word)

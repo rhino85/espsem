@@ -5,13 +5,11 @@ window.onload = function() {
 			canvas.width  = window.innerWidth*0.70;
 			canvas.height = window.innerHeight*0.80;
 			paper.setup(canvas);
-		function init(){
-			
 			paper.view.translate(paper.view.center);
-			var background = new paper.Path.Rectangle(paper.view.bounds);
+		var background = new paper.Path.Rectangle(paper.view.bounds);
 			background.fillColor = "White";
-			background.onMouseDown = function(event) {
-			console.log("euh");
+		
+		background.onMouseDown = function(event) {
 			switch($('#Tool').val()) {
     		case "zoomIn":
         		paper.view.center = event.point;
@@ -49,16 +47,8 @@ window.onload = function() {
 			background.position = paper.view.center;
 			updateView();
     	}
-		/*background.onMouseDrag = function(event) {
-			console.log("toc");
-			if($('#Tool').val()=="Move"){
-				console.log()
-				paper.view.center.x += event.delta.x;
-				paper.view.center.y += event.delta.y;
-			}
-		}*/
-		}
 
+    	//fonction a appeler après un changement du graphe pour redessiner si besoin les enveloppes, les liens, etc..
 		function updateView() {
 			if(allAreasVisible){
 				for (var i = 0; i < syns.length; i++) {
@@ -100,9 +90,10 @@ window.onload = function() {
     	
 		var cliques, syns, coords;
 		var extremevalues = [0, 0, 0, 0, 0, 0];
-		var cliVisible = true;
+		var cliVisible = false;
 		var allLinkVisible = false;
 		var allAreasVisible = false;
+		var showAreas = false;
 		var axe1 = document.getElementById('axe1');
 		var axe2 = document.getElementById('axe2');
 
@@ -113,15 +104,29 @@ window.onload = function() {
 			updateAxis();
 		});
 
+		function updateAxis(){
+			var x = $('#axe1').val();
+			var y = $('#axe2').val();
+			for (var i = 0; i < cliques.length; i++) {
+				cliques[i].setAxis(x, y);
+			}
+			for (var i = 0; i < syns.length; i++) {
+				syns[i].setAxis(x, y);
+			}
+			updateView();
+		}
+
 		
-		$('#hidecli').change(function(){
-			if($('#hidecli').is(":checked"))
+		$('#showcli').change(function(){
+			if(!$('#showcli').is(":checked"))
 			{
+				cliVisible = true;
 				for (var i = 0; i < cliques.length; i++) {
 					cliques[i].cliVisible = false;
 					cliques[i].pointt.visible = false;
 				}
 			}else{
+				cliVisible = false;
 				for (var i = 0; i < cliques.length; i++) {
 					cliques[i].cliVisible = true;
 					cliques[i].pointt.visible = true;
@@ -129,15 +134,38 @@ window.onload = function() {
 			}
 		})
 
+		$('#showAreas').change(function(){
+			
+			if($('#showAreas').is(":checked"))
+			{	showAreas = true;
+				for (var i = 0; i < syns.length; i++) {
+					if(syns[i].clicked)
+					{
+						syns[i].enveloppeCli();
+					}
+				}
+			}else{
+				if($('#showallAreas').is(":checked")){
+					$('#showallAreas').prop('checked', false);
+					allAreasVisible = false;
+				}
+				showAreas = false;
+				for (var i = 0; i < syns.length; i++) {
+					if(syns[i].enveloppe != undefined){
+						syns[i].enveloppe.remove();
+					}
+				}
+			}
+		})
+
 		$('#showalllink').change(function(){
 			if($('#showalllink').is(":checked"))
-			{
+			{	
 				allLinkVisible = true;
 				for (var i = 0; i < cliques.length; i++) {
 					if(!cliques[i].clicked){
 						cliques[i].linkWithWords(0.1);
 					}
-					
 				}
 			}else{
 				allLinkVisible = false;
@@ -150,11 +178,15 @@ window.onload = function() {
 			}
 		})
 		$('#showallAreas').change(function(){
+			if(!$('#showAreas').is(":checked")){
+				$('#showAreas').prop('checked', true);
+				showAreas = true;
+			}
 					if($('#showallAreas').is(":checked"))
 					{
 						allAreasVisible = true;
 						for (var i = 0; i < syns.length; i++) {
-							if(!syns[i].clicked){
+							if(syns[i].enveloppe == undefined){
 								syns[i].enveloppeCli();
 							}
 						}
@@ -196,18 +228,7 @@ window.onload = function() {
        		}
 		});
 
-		function updateAxis(){
-			var x = $('#axe1').val();
-			var y = $('#axe2').val();
-			for (var i = 0; i < cliques.length; i++) {
-				cliques[i].setAxis(x, y);
-			}
-			for (var i = 0; i < syns.length; i++) {
-				syns[i].setAxis(x, y);
-			}
-			updateView();
-
-		}
+		
 
 		function Syn(asyn, i){
 
@@ -252,15 +273,10 @@ window.onload = function() {
 				this.paths = [];
 				this.enveloppe;
 				
-				
-           		
-           		
-				//this.html = $("<div class='syn' id='" + this.i + "''>" + this.mot + "</div>").appendTo("#syns");
-				
-           		this.html = $("<div class='syn' id='" + this.index + "'></div>").appendTo("#synlist");
-           		//this.checkbox = $("<input id='"+this.index+"' type='checkbox' checked>").appendTo(this.html);
+				this.html = $("<div class='syn' id='" + this.index + "'></div>").appendTo("#synlist");
            		this.span = $("<span id='" + this.index + "'>" + this.mot + "</span>").appendTo(this.html);
            		
+
            		this.show = function(){
 					
 					this.text.position = new paper.Point(this.point.x, this.point.y - 30);
@@ -277,8 +293,6 @@ window.onload = function() {
 					this.text.visible = true;
 					this.rectangle.visible = true;
 					this.linkPointText.visible = true;
-					
-
 				}.bind(this);
 
 				this.showCliquesHtml = function(){
@@ -286,7 +300,6 @@ window.onload = function() {
 					$("#clilist").html("");
 					$("#clispan").html("");
 					$("#clispan").append(this.mot);
-					
 					for (var i = 0; i < this.cliques.length; i++) {
 						var html = "<div class='clique' id="+this.cliques[i].index+">";
 						for (var j = 0; j < this.cliques[i].mots.length; j++) {
@@ -316,12 +329,11 @@ window.onload = function() {
 				}.bind(this);
 
 				this.unselect = function(event){
-					
 					this.span.css("font-weight","Normal");
 					$("#clilist").html("");
 				}.bind(this);
 
-				this.linkWithCliques = function(thickness){
+				/*this.linkWithCliques = function(thickness){
 					for (var i = 0; i < this.cliques.length; i++) {
 						//this.cliques[i].show();
 						//this.cliques[i].linkWithWords(thickness/2)
@@ -355,34 +367,69 @@ window.onload = function() {
 					for (var i = 0; i < this.cliques.length; i++) {
 						this.cliques[i].unLinkWithWords();
 					}
-				}
+				}*/
 
 				this.circle.onMouseEnter = function(){
+					
 					if(!this.clicked){
 						this.show();
-						this.showCliquesHtml();
-						//this.linkWithCliques(0.5);
 						this.enveloppeCli();
 						this.circle.scale(1.5);
+					}
+					this.showCliquesHtml();
+					if(this.enveloppe != undefined){
+						this.enveloppe.strokeWidth = 3;
 					}
 				}.bind(this);
 
 				this.circle.onMouseLeave = function(event){
-					
-				if(!this.clicked){
-					this.circle.scale(0.666);
-					this.hide();
-					if(!allAreasVisible){
-						this.enveloppe.remove();
+					if(this.enveloppe != undefined){
+						this.enveloppe.strokeWidth = 1;
 					}
-					if(allLinkVisible){
-						this.unLinkWithCliques();
-						this.linkWithCliques(0.1);
-					}
+					if(!this.clicked){
+						this.circle.scale(0.666);
+						this.hide();
+						if(!allAreasVisible){
+							if(this.enveloppe != undefined){
+								this.enveloppe.remove();
+							}
+						}else{
+							console.log("bah");
+							this.enveloppe.strokeWidth = 1;
+						}
+					}else{
+						if(this.enveloppe != undefined){
+							if(allAreasVisible){
+								
+							}
+						}
 				}
 				}.bind(this);
 
+				this.circle.onClick = function(event){
+					if(this.clicked){
+						this.clicked=false;
+						this.unselect();
+						if(!allAreasVisible){
+							if(this.enveloppe!=undefined){
+								this.enveloppe.remove();
+							}
+							
+						}
+					}
+					else{
+						this.clicked = true;
+						this.select();
+						//this.enveloppeCli();
+					}
+				}.bind(this);
+
+
 				this.enveloppeCli = function(){
+					console.log(showAreas);
+					if(showAreas){
+
+
 					if (this.cliques.length == 1){
 						this.enveloppe = new paper.Path.Circle(this.point, 10);
 					}else{
@@ -410,31 +457,35 @@ window.onload = function() {
 					this.enveloppe.blendMode = 'multiply';*/
 					this.enveloppe.strokeColor = "red";
 					this.enveloppe.strokeWidth = 1;
-					
+					this.enveloppe.onMouseEnter = function(){
+						this.enveloppe.strokeWidth = 3;
+						if(!this.clicked){
+							this.show();
+						}
+					}.bind(this);
+					this.enveloppe.onMouseLeave = function(){
+						this.enveloppe.strokeWidth = 1;
+						if(!this.clicked){
+							this.hide();
+						}
+					}.bind(this);
+				}
 					
 				}.bind(this);
 
-				this.circle.onClick = function(event){
-					if(this.clicked){
-						this.clicked=false;
-						this.unselect();
-						this.enveloppe.remove();
-						if(allLinkVisible){
-							this.linkWithCliques(0.1);
-						}
-					}
-					else{
-						this.clicked = true;
-						this.select();
-						this.enveloppeCli();
-					}
-				}.bind(this);
+				
 
 				this.label.onMouseEnter = function(){
+					if(this.enveloppe != undefined){
+						this.enveloppe.strokeWidth = 3;
+					}
 					this.showCliquesHtml();
 				}.bind(this);
 
 				this.label.onMouseLeave = function(event){
+					if(this.enveloppe != undefined){
+						this.enveloppe.strokeWidth = 1;
+					}
 					if(!showallAreas){
 						this.enveloppe.remove();
 					}
@@ -448,12 +499,11 @@ window.onload = function() {
 							this.hide();
 							this.unselect();
 							this.circle.scale(0.666);
-							this.enveloppe.remove();
-							if(allLinkVisible){
-								this.linkWithCliques(0.1);}
+							if(!allAreasVisible){
+								this.enveloppe.remove();
+							}
 							
 						}
-					
 					}
 				}.bind(this);
 
@@ -477,7 +527,12 @@ window.onload = function() {
 					if(this.clicked){
 						this.clicked=false;
 						this.unselect();
-						this.enveloppe.remove();
+						if(!allAreasVisible){
+							if(this.enveloppe!=undefined){
+								this.enveloppe.remove();
+							}
+							
+						}
 					}
 					else{
 						this.clicked = true;
@@ -491,7 +546,9 @@ window.onload = function() {
 						this.show();
 						this.showCliquesHtml();
 						//this.linkWithCliques(0.5);
-						this.enveloppeCli();
+						if(!allAreasVisible){
+							this.enveloppeCli();
+						}
 						this.circle.scale(1.5);
 					}			
 				}.bind(this));
@@ -500,7 +557,12 @@ window.onload = function() {
 					if(!this.clicked){
 					this.circle.scale(0.666);
 					this.hide();
-					this.enveloppe.remove();
+					if(!allAreasVisible){
+						if(this.enveloppe!=undefined){
+								this.enveloppe.remove();
+							}
+					}
+					
 					if(allLinkVisible){
 						//this.unLinkWithCliques();
 						//this.linkWithCliques(0.1);
@@ -518,6 +580,7 @@ window.onload = function() {
 				}.bind(this);
 
 				this.setCoordinates = function(x, y){
+
 					this.point.x = x;
 					this.point.y = y;
 					
@@ -550,7 +613,6 @@ window.onload = function() {
 				this.mots = clique;
 				for (var i = 0; i < this.mots.length; i++) {
 					for (var j = 0; j < syns.length; j++) {
-
 						if(this.mots[i] == syns[j].mot){
 							this.mots[i]= syns[j];
 						}
@@ -559,14 +621,13 @@ window.onload = function() {
 				this.clicked = false;
 				this.coords = coords[this.index];
            		this.point = new paper.Point(0,0);
-           		this.cliVisible = true;
+           		this.cliVisible = false;
 
            		this.text = new paper.PointText(new paper.Point(this.point.x, this.point.y));
            		this.text.visible = false;
 				this.text.justification = 'center';
 				this.text.fillColor = this.gray;
 				this.text.fontSize = 15;
-				this.text.content = this.mot;
 				this.labelText = "";
 				for (var i = 0; i < this.mots.length; i++) {
 					if(i == 0){
@@ -580,13 +641,13 @@ window.onload = function() {
 
 				
 
-				let b = new paper.Rectangle(this.text.bounds);;
+				let b = new paper.Rectangle(this.text.bounds);
 				b.width = b.width*1.1;
 				this.rectangle = new paper.Path.Rectangle(b);
 				this.rectangle.strokeColor = this.gray;
 				this.rectangle.visible = false;
 
-				let a = new paper.Point(this.text.bounds.bottom, this.text.bounds.left)
+				let a = new paper.Point(this.text.bounds.bottom, this.text.bounds.left);
            		this.linkPointText = new paper.Path.Line(this.point, a);
            		this.linkPointText.strokeColor = this.snapColor;
 				this.linkPointText.visible = false;
@@ -614,8 +675,7 @@ window.onload = function() {
            			this.pointt.strokeWidth = 2;
            			this.text.position = new paper.Point(this.point.x, this.point.y - 30);
 					this.text.fillColor = this.gray;
-					
-					
+					this.rectangle.strokeColor = this.gray;
 					this.rectangle.position = this.text.position;
 					
 					this.linkPointText.firstSegment.point = this.point;
@@ -625,6 +685,49 @@ window.onload = function() {
 					this.text.visible = true;
 					this.rectangle.visible = true;
 					this.linkPointText.visible = true;
+           		}.bind(this);
+
+           		this.hide = function() {
+           			this.pointt.scale(0.666);
+           			this.pointt.strokeWidth = 1;
+           			this.labelVisible = false;
+					this.linkPointText.visible = false;
+					
+					this.linkPointText.strokeColor = this.gray;
+					this.text.visible = false;
+					this.rectangle.visible = false;
+           		}.bind(this);
+
+           		this.select = function(){
+           			this.text.fillColor = "black";
+           			this.linkPointText.strokeColor = "black";
+           			this.rectangle.strokeColor = "black";
+           		}
+
+           		
+
+           		this.updateLabel= function(){
+					this.linkPointText.firstSegment.point = this.point;
+					let a = new paper.Point(this.text.bounds.left, this.text.bounds.bottom);
+					this.linkPointText.lastSegment.point = a;
+    				this.linkPointText.strokeWidth = 1;
+				}
+
+           		
+
+           		this.linkWithWords = function(thickness){
+           			for (var i = 0; i < this.mots.length; i++) {
+           				let a = new paper.Path.Line(this.point, this.mots[i].point);
+						a.strokeColor = 'black';
+						a.strokeWidth = thickness;
+						this.paths.push(a);
+           			}
+           		}.bind(this);
+
+           		this.unLinkWithWords = function(){
+           			for (var i = 0; i < this.paths.length; i++) {
+						this.paths[i].remove();
+					}
            		}.bind(this);
 
            		this.label.onMouseDrag = function(event) {
@@ -646,47 +749,22 @@ window.onload = function() {
 					}
            		}.bind(this);
 
-           		this.updateLabel= function(){
-					this.linkPointText.firstSegment.point = this.point;
-					let a = new paper.Point(this.text.bounds.left, this.text.bounds.bottom);
-					//this.text.rectangle.position = this.text.position;
-					this.linkPointText.lastSegment.point = a;
-    				this.linkPointText.strokeColor = this.gray;
-					this.linkPointText.strokeWidth = 1;
-				}
-
-           		this.hide = function() {
-           			this.pointt.scale(0.666);
-           			this.pointt.strokeWidth = 1;
-           			this.labelVisible = false;
-					this.linkPointText.visible = false;
-					
-					this.linkPointText.strokeColor = this.gray;
-					this.text.visible = false;
-					this.rectangle.visible = false;
-           		}.bind(this);
-
-           		this.linkWithWords = function(thickness){
-           			console.log(this);
-           			for (var i = 0; i < this.mots.length; i++) {
-           				
-           				let a = new paper.Path.Line(this.point, this.mots[i].point);
-						a.strokeColor = 'black';
-						a.strokeWidth = thickness;
-						this.paths.push(a);
-           			}
-           		}.bind(this);
-           		this.unLinkWithWords = function(){
-           			for (var i = 0; i < this.paths.length; i++) {
-						this.paths[i].remove();
-					}
-           		}.bind(this);
-
            		this.pointt.onMouseEnter = function(event){
            			if(!this.clicked){
            				this.show();
 						this.linkWithWords(0.5);
            			}
+				}.bind(this);
+				this.pointt.onClick = function(event){
+					if(this.clicked){
+						this.clicked = false;
+						this.unLinkWithWords();
+						this.linkWithWords(0.5);
+					}else{
+						this.linkWithWords(1);
+						this.clicked = true;
+						this.select();
+					}
 				}.bind(this);
 				this.pointt.onMouseLeave = function(event){
 					if(!this.clicked){
@@ -697,31 +775,23 @@ window.onload = function() {
 							this.linkWithWords(0.1);
 						}
 					}
+				}.bind(this);
 				
-				}.bind(this);
-				this.pointt.onClick = function(event){
-					if(this.clicked){
-						this.clicked = false;
-						this.unLinkWithWords();
-						this.linkWithWords(0.5);
-					}else{
-						this.linkWithWords(1);
-						this.clicked = true;
-					}
-					
-				}.bind(this);
 				this.setAxis = function(x, y){
 					this.setCoordinates(0.4*this.coords[x]*paper.view.bounds.width/extremevalues[x], 0.4*this.coords[y]*paper.view.bounds.height/extremevalues[y])
 
 				}.bind(this);
 
 				this.setCoordinates= function(x, y){
+
 					this.point.x = x;
 					this.point.y = y;
 					this.updateLabel();
-					this.unLinkWithWords();
 					this.pointt.position = this.point;
-					this.pointt.visible = true;
+					if(cliVisible){
+						this.pointt.visible = true;
+					}
+					
 				}
 
 		}
@@ -732,6 +802,7 @@ window.onload = function() {
 			coords=null;
 			paper.project.clear();
 			$("#clilist").html("");
+			$("#clispan").html("");
 			$("#synlist").html("");
 			$('#axe1').val(0);
 			$('#axe2').val(1);
@@ -740,12 +811,11 @@ window.onload = function() {
 		function espsem(data, statut){
 			//netoyer la page avant d'ajouter les nouvelles données
 			clearpage();
-			init();
-
 			
 			data = JSON.parse(data);
-			cliques = data.cliques;
 			console.log(data);
+			
+			cliques = data.cliques;
 			syns = data.synonymes;
 			coords = data.coords;
 			getExtremsCoords();
@@ -769,7 +839,7 @@ window.onload = function() {
            			}
            		}
 			}
-			//console.log(cliques, syns);
+			
 			for (var i = 0; i < syns.length; i++) {
 				syns[i].setAxis(0,1);
 			}
