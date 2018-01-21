@@ -1,6 +1,5 @@
 window.onload = function() {
 
-		
 		var canvas = document.getElementById('canvas');
 			canvas.width  = window.innerWidth*0.70;
 			canvas.height = window.innerHeight*0.80;
@@ -8,45 +7,18 @@ window.onload = function() {
 			paper.view.translate(paper.view.center);
 		var background = new paper.Path.Rectangle(paper.view.bounds);
 			background.fillColor = "White";
+			var cliques, syns, coords;
+		var extremevalues = [0, 0, 0, 0, 0, 0];
+		var cliVisible = false;
+		var allLinkVisible = false;
+		var allAreasVisible = false;
+		var showAreas = false;
+		var axe1 = document.getElementById('axe1');
+		var axe2 = document.getElementById('axe2');
 		
-		background.onMouseDown = function(event) {
-			switch($('#Tool').val()) {
-    		case "zoomIn":
-        		paper.view.center = event.point;
-				for (var i = 0; i < syns.length; i++) {
-    				let x2 = syns[i].point.x*1.4;
-    				let y2 = syns[i].point.y*1.4;
-    				syns[i].setCoordinates(x2, y2);
-    			}
-    			for (var i = 0; i < cliques.length; i++) {
-    				let x2 = cliques[i].point.x*1.4;
-    				let y2 = cliques[i].point.y*1.4;
-    				cliques[i].setCoordinates(x2, y2);
-    			}
-        	break;
-    		case "zoomOut":
-    		console.log("tac");
-        		paper.view.center = event.point;
-    			for (var i = 0; i < syns.length; i++) {
-    				let x2 = syns[i].point.x*0.7;
-    				let y2 = syns[i].point.y*0.7 ;
-    				syns[i].setCoordinates(x2, y2);
-    			}
-    			for (var i = 0; i < cliques.length; i++) {
-    				let x2 = cliques[i].point.x*0.7;
-    				let y2 = cliques[i].point.y*0.7;
-    				cliques[i].setCoordinates(x2, y2);
-    			}
-    		break;
-       		case "Move":
-        		paper.view.center = event.point;
-       		break;
-    		default:
-        		//code block
-			}
-			background.position = paper.view.center;
-			updateView();
-    	}
+		
+		
+
 
     	//fonction a appeler après un changement du graphe pour redessiner si besoin les enveloppes, les liens, etc..
 		function updateView() {
@@ -88,14 +60,7 @@ window.onload = function() {
 		
 		
     	
-		var cliques, syns, coords;
-		var extremevalues = [0, 0, 0, 0, 0, 0];
-		var cliVisible = false;
-		var allLinkVisible = false;
-		var allAreasVisible = false;
-		var showAreas = false;
-		var axe1 = document.getElementById('axe1');
-		var axe2 = document.getElementById('axe2');
+		
 
 		$('#axe1').change(function(){
 			updateAxis();
@@ -186,9 +151,7 @@ window.onload = function() {
 					{
 						allAreasVisible = true;
 						for (var i = 0; i < syns.length; i++) {
-							if(syns[i].enveloppe == undefined){
-								syns[i].enveloppeCli();
-							}
+							syns[i].enveloppeCli();
 						}
 					}else{
 						allAreasVisible = false;
@@ -370,16 +333,23 @@ window.onload = function() {
 				}*/
 
 				this.circle.onMouseEnter = function(){
-					
+					this.showCliquesHtml();
 					if(!this.clicked){
 						this.show();
-						this.enveloppeCli();
+						if(!allAreasVisible){
+							this.enveloppeCli();
+						}
 						this.circle.scale(1.5);
+						if(this.enveloppe != undefined){
+							this.enveloppe.strokeWidth = 1;
+						}
+					}else{
+						if(this.enveloppe != undefined){
+							this.enveloppe.strokeWidth = 3;
+						}
 					}
-					this.showCliquesHtml();
-					if(this.enveloppe != undefined){
-						this.enveloppe.strokeWidth = 3;
-					}
+					
+					
 				}.bind(this);
 
 				this.circle.onMouseLeave = function(event){
@@ -550,6 +520,8 @@ window.onload = function() {
 							this.enveloppeCli();
 						}
 						this.circle.scale(1.5);
+					}else{
+						this.enveloppe.strokeWidth = 3;
 					}			
 				}.bind(this));
 
@@ -562,11 +534,8 @@ window.onload = function() {
 								this.enveloppe.remove();
 							}
 					}
-					
-					if(allLinkVisible){
-						//this.unLinkWithCliques();
-						//this.linkWithCliques(0.1);
-					}
+				}else{
+					this.enveloppe.strokeWidth = 1;
 				}		
 				}.bind(this));
 
@@ -797,6 +766,11 @@ window.onload = function() {
 		}
 
 		function clearpage(){
+			
+		}
+
+		function espsem(data, statut){
+			//netoyer la page avant d'ajouter les nouvelles données
 			syns = null;
 			cliques = null;
 			coords=null;
@@ -806,11 +780,48 @@ window.onload = function() {
 			$("#synlist").html("");
 			$('#axe1').val(0);
 			$('#axe2').val(1);
-		}
+			background = new paper.Path.Rectangle(paper.view.bounds);
+			background.fillColor = "White";
 
-		function espsem(data, statut){
-			//netoyer la page avant d'ajouter les nouvelles données
-			clearpage();
+		background.onMouseDown = function(event) {
+			console.log("quoi");
+			switch($('#Tool').val()) {
+    		case "zoomIn":
+        		paper.view.center = event.point;
+				for (var i = 0; i < syns.length; i++) {
+    				let x2 = syns[i].point.x*1.4;
+    				let y2 = syns[i].point.y*1.4;
+    				syns[i].setCoordinates(x2, y2);
+    			}
+    			for (var i = 0; i < cliques.length; i++) {
+    				let x2 = cliques[i].point.x*1.4;
+    				let y2 = cliques[i].point.y*1.4;
+    				cliques[i].setCoordinates(x2, y2);
+    			}
+        	break;
+    		case "zoomOut":
+    		console.log("tac");
+        		paper.view.center = event.point;
+    			for (var i = 0; i < syns.length; i++) {
+    				let x2 = syns[i].point.x*0.7;
+    				let y2 = syns[i].point.y*0.7 ;
+    				syns[i].setCoordinates(x2, y2);
+    			}
+    			for (var i = 0; i < cliques.length; i++) {
+    				let x2 = cliques[i].point.x*0.7;
+    				let y2 = cliques[i].point.y*0.7;
+    				cliques[i].setCoordinates(x2, y2);
+    			}
+    		break;
+       		case "Move":
+        		paper.view.center = event.point;
+       		break;
+    		default:
+        		//code block
+			}
+			background.position = paper.view.center;
+			updateView();
+    	}
 			
 			data = JSON.parse(data);
 			console.log(data);

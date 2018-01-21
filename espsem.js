@@ -144,13 +144,18 @@ app.get('/data/*', function (req, res) {
     
 
     req = req.originalUrl.split("/");
-    console.log(req);
     req = req[req.length - 1];
     req = decode(req);
-    
-
-    res.json(dico.get(req));
-  });
+    console.log(req);
+    console.log(dico.has(req));
+    if(dico.has(req)){
+      console.log("okkk");
+      res.json(dico.get(req));
+    }else{
+      console.log("not okkk");
+      res.json("ERROR WORD DOESN'T EXIST");
+    }
+   });
 app.get('/*', function (req, res) {
   
   req = req.originalUrl.split("/");
@@ -160,8 +165,11 @@ app.get('/*', function (req, res) {
     req = 'mot';
   }
   req = decode(req);
-  
-  res.render('espsem', {word : req});
+  if(dico.has(req)){
+      res.render('espsem', {word : req});
+    }else{
+      res.send(req + " n'est pas dans le DES")
+    }
 });
 
 
