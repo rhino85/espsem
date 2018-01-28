@@ -22,69 +22,93 @@ body{
 	top:0;
 	padding: 0;
 	margin: 0;
-	border-bottom: 2px solid black;
+	border-bottom: 3px solid black;
 	border-left: 1px solid;
 }
 #Select{
 	position: absolute;
-	right: 15%;
-	width: 20%;
-	height: 100%;
-	top:0%;
+	right: 0%;
+	width: 33%;
+	height: 90%;
+	top:5%;
 }
 #SelectXAxis{
 	position: absolute;
-	top:25%;
+	top:0%;
 	right:0%;
+	padding-right: 25%;
 }
 #SelectYAxis{
 	position: absolute;
-	top:50%;
+	top:33%;
 	right:0%;
+	padding-right: 25%;
 }
 
 #SelectTool{
 	position: absolute;
 	right: 0;
-	top:75%;
+	top:66%;
+	padding-right: 25%;
 }
 
 #Checkboxes{
 	position: absolute;
 	width: 33%;
-	height: 100%;
-	left: 5%;
-	top:0;
+	height: 90%;
+	left: 0%;
+	top:5%;
+}
+
+#ShowAreas{
+	position: absolute;
+	top:0%;
+	right: 0%;
+	padding-right: 25%;
 }
 #Showcli{
 	position: absolute;
 	top:25%;
+	right: 0%;
+	padding-right: 25%;
 }
 
 #Showalllinks{
 	position: absolute;
 	top:50%;
+	right: 0%;
+	padding-right: 25%;
 }
 #ShowallAreas{
 	position: absolute;
 	top:75%;
+	right: 0%;
+	padding-right: 25%;
 }
 
-#word{
-	position: absolute;
-	width: 33%;
-	height: 33%;
-	left: 33%;
-	bottom:20%;
-	font-size: 2em;
-}
+
+
+
 #motvedette{
 	position: absolute;
 	width: 33%;
-	height: 33%;
+	height: 90%;
 	left: 33%;
-	bottom:50%;
+	top:5%;
 	font-size: 1.3em;
+	border: 1px solid gray;
+	text-align: center;
+	
+}
+#word{
+
+	position: absolute;
+	width: 80%;
+	height: 50%;
+	left: 10%;
+	bottom:12%;
+	font-size: 2em;
+	text-align: center;
 }
 
 
@@ -95,7 +119,7 @@ body{
 	top:0;
 	padding: 0;
 	margin: 0;
-	border-right: 2px solid;
+	border-right: 3px solid;
 
 }
 #syns{
