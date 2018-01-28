@@ -767,11 +767,19 @@ window.onload = function() {
 					}
            		}.bind(this);
 
+           		this.label.onMouseEnter = function(event) {
+					this.showWords(true);
+           		}.bind(this);
+
+           		this.label.onMouseLeave = function(event) {
+					this.showWords(false);
+           		}.bind(this);
+
            		this.pointt.onMouseEnter = function(event){
+           			this.showWords(true);
            			if(!this.clicked){
            				this.show();
-           				this.showWords(true);
-						//this.linkWithWords(0.5);
+           				//this.linkWithWords(0.5);
            			}
 				}.bind(this);
 				this.pointt.onClick = function(event){
