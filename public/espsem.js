@@ -341,7 +341,11 @@ window.onload = function() {
 						}
 						this.circle.scale(1.5);
 						if(this.enveloppe != undefined){
-							this.enveloppe.strokeWidth = 1;
+							if(allAreasVisible){
+								this.enveloppe.strokeWidth = 3;
+							}else{
+								this.enveloppe.strokeWidth = 1;
+							}
 						}
 					}else{
 						if(this.enveloppe != undefined){
@@ -401,30 +405,58 @@ window.onload = function() {
 
 
 					if (this.cliques.length == 1){
-						this.enveloppe = new paper.Path.Circle(this.point, 10);
-					}else{
+						this.enveloppe = new paper.Path.Circle(this.point, 7);
+					} else if(this.cliques.length == 2) {
+
 						
-							var convexHull = new ConvexHullGrahamScan();
-							for (var i = 0; i < this.cliques.length; i++) {
-								convexHull.addPoint(this.cliques[i].point.x, this.cliques[i].point.y);
-							}
-							var enveloppePoints = convexHull.getHull();
-							console.log(enveloppePoints);
-							if(this.enveloppe != undefined){
-								this.enveloppe.remove();
-							}
-							this.enveloppe = new paper.Path(enveloppePoints);
-							this.enveloppe.smooth({ type: 'catmull-rom' });
-							this.enveloppe.closed = true;
-							
+							//2 points
+							//on prends le centre
+							let center = new paper.Point((this.cliques[0].point.x + this.cliques[1].point.x) / 2, (this.cliques[0].point.y + this.cliques[1].point.y) / 2);
+							//on dessine un rectangle de longueur correspondant
+							let length = Math.sqrt(Math.pow(this.cliques[0].point.x - this.cliques[1].point.x, 2) + Math.pow(this.cliques[0].point.y - this.cliques[1].point.y, 2));
+							length = length + 10;
+							//console.log(length);
+							//var bobobob= new paper.Path.Circle(center, 3);
+							//bobobob.fillColor = "pink";
+							var rect = new paper.Rectangle(0, 0, length, 10);
+							//on positionne le rectangle : 
+							rect.center = center;
+							rect = new paper.Path.Rectangle(rect, 5);
+
+							//on le fait pivoter
+							//calcul de l'angle...
+							/*var chien1= new paper.Path.Circle(this.cliques[0].point, 3);
+							chien1.fillColor = "blue";
+							var chien2= new paper.Path.Circle(this.cliques[1].point, 3);
+							chien2.fillColor = "blue";*/
+							let angle =  Math.atan((this.cliques[0].point.y - this.cliques[1].point.y) / (this.cliques[0].point.x - this.cliques[1].point.x));
+							//angle = - center.getAngle(this.cliques[0].point);
+							angle = angle * 180 / 3.14;
+							console.log(angle);
+							rect.rotate(angle);
+							this.enveloppe = rect;
+
+							//
+
+
+
+
 						
-						
+					} else {
+						var convexHull = new ConvexHullGrahamScan();
+						for (var i = 0; i < this.cliques.length; i++) {
+							convexHull.addPoint(this.cliques[i].point.x, this.cliques[i].point.y);
+						}
+						var enveloppePoints = convexHull.getHull();
+						console.log(enveloppePoints);
+						if(this.enveloppe != undefined){
+							this.enveloppe.remove();
+						}
+						this.enveloppe = new paper.Path(enveloppePoints);
+						this.enveloppe.closed = true;
+						this.enveloppe.smooth({ type: 'catmull-rom' });
 					}
-					for (var i = 0; i < this.cliques.length; i++) {
-						//this.cliques[i].show();
-					}
-					/*this.enveloppe.fillColor = new paper.Color(1,0,0,0.1);
-					this.enveloppe.blendMode = 'multiply';*/
+					
 					this.enveloppe.strokeColor = "red";
 					this.enveloppe.strokeWidth = 1;
 					this.enveloppe.onMouseEnter = function(){
@@ -518,6 +550,8 @@ window.onload = function() {
 						//this.linkWithCliques(0.5);
 						if(!allAreasVisible){
 							this.enveloppeCli();
+						}else{
+							this.enveloppe.strokeWidth = 3;
 						}
 						this.circle.scale(1.5);
 					}else{
@@ -533,6 +567,8 @@ window.onload = function() {
 						if(this.enveloppe!=undefined){
 								this.enveloppe.remove();
 							}
+					}else{
+						this.enveloppe.strokeWidth = 1;
 					}
 				}else{
 					this.enveloppe.strokeWidth = 1;
@@ -682,6 +718,19 @@ window.onload = function() {
     				this.linkPointText.strokeWidth = 1;
 				}
 
+				this.showWords= function(yes){
+					for (var i = 0; i < this.mots.length; i++) {
+						if(!this.mots[i].clicked){
+							if(yes){
+								this.mots[i].show();
+							}
+							else{
+								this.mots[i].hide();
+							}
+						}
+					}
+				}.bind(this);
+
            		
 
            		this.linkWithWords = function(thickness){
@@ -713,7 +762,7 @@ window.onload = function() {
 						this.text.visible = false;
 						this.unLinkWithWords();
 						if(allLinkVisible){
-							this.linkWithWords(0.1);
+							//this.linkWithWords(0.1);
 						}
 					}
            		}.bind(this);
@@ -721,27 +770,29 @@ window.onload = function() {
            		this.pointt.onMouseEnter = function(event){
            			if(!this.clicked){
            				this.show();
-						this.linkWithWords(0.5);
+           				this.showWords(true);
+						//this.linkWithWords(0.5);
            			}
 				}.bind(this);
 				this.pointt.onClick = function(event){
 					if(this.clicked){
 						this.clicked = false;
 						this.unLinkWithWords();
-						this.linkWithWords(0.5);
+						//this.linkWithWords(0.5);
 					}else{
-						this.linkWithWords(1);
+						//this.linkWithWords(1);
 						this.clicked = true;
 						this.select();
 					}
 				}.bind(this);
 				this.pointt.onMouseLeave = function(event){
+					this.showWords(false);
 					if(!this.clicked){
 						this.hide();
 						this.text.visible = false;
 						this.unLinkWithWords();
 						if(allLinkVisible){
-							this.linkWithWords(0.1);
+							//this.linkWithWords(0.1);
 						}
 					}
 				}.bind(this);
