@@ -1,147 +1,58 @@
-<!DOCTYPE html>
-<html>
-<head>
-	<meta charset="utf-8" />
-	<title>surface semantique</title>
-	<script src="jquery.js"></script>
-	<link rel="stylesheet" type="text/css" href="style.css">
-	<script type="text/javascript" src="paper-full.js"></script>
-	<script type="text/javascript" src="grahamScan.js"></script>
-</head>
-<body>
-	<div id="lists">
-		<div id="syns"> </div>
-		<div id="cliques"></div>
-	</div>
-	<div id="ui">
-	<div id="SelectAxis">
-	<div id="SelectXAxis">Axe Horizontal : 
-			<select id="axe1">
-  				<option value="0" selected>1</option> 
-  				<option value="1">2</option>
-  				<option value="2">3</option>
-  				<option value="3">4</option> 
-  				<option value="4">5</option>
-  				<option value="5">6</option>
-			</select> 
-		</div>
-		<div id="SelectYAxis">Axe Vertical :
-			<select id="axe2">
-  				<option value="0">1</option> 
-  				<option value="1" selected>2</option>
-  				<option value="2">3</option>
-  				<option value="3">4</option> 
-  				<option value="4">5</option>
-  				<option value="5">6</option>
-			</select>
-		</div>
+window.onload = function() {
 
-		<div id="Hidecli"> Cacher les Cliques : <input id="hidecli" type="checkbox"> </div>
-		<div id="Showalllinks"> Montrer tout les Liens : <input id="showalllink" type="checkbox"> </div>
-	 </div>
-	
-
-	
-		
-		<input id="word" type="text" value="bois">
-		
-		<div id="SelectTool"> Navigation
-			<select id="Tool">
-				<option value="none" selected>aucun</option> 
-  				<option value="zoomIn">zoomer</option> 
-  				<option value="zoomOut">dézoomer</option>
-  				<option value="Move">déplacer</option>
-  				
-			</select>
-		</div>
-		
-		
-
-	</div>
-	<canvas id="canvas"></canvas>
-	<script type="text/javascript">
-	window.onload = function() {
-
-		
 		var canvas = document.getElementById('canvas');
-			canvas.width  = window.innerWidth*0.75;
-			canvas.height = window.innerHeight*0.85;
+			canvas.width  = window.innerWidth*0.70;
+			canvas.height = window.innerHeight*0.80;
 			paper.setup(canvas);
-		function init(){
-			
 			paper.view.translate(paper.view.center);
-			var background = new paper.Path.Rectangle(paper.view.bounds);
+		var background = new paper.Path.Rectangle(paper.view.bounds);
 			background.fillColor = "White";
-			background.onMouseDown = function(event) {
-			console.log("euh");
-			switch($('#Tool').val()) {
-    		case "zoomIn":
-    		console.log("hey");
-        		paper.view.center = event.point;
+			var cliques, syns, coords;
+		var extremevalues = [0, 0, 0, 0, 0, 0];
+		var cliVisible = false;
+		var allLinkVisible = false;
+		var allAreasVisible = false;
+		var showAreas = false;
+		var axe1 = document.getElementById('axe1');
+		var axe2 = document.getElementById('axe2');
+		
+		
+		
 
-    			for (var i = 0; i < syns.length; i++) {
-    				let x2 = syns[i].point.x*1.4 //+ zoomA.x;
-    				let y2 = syns[i].point.y*1.4 //+ zoomA.y;
-    				syns[i].setCoordinates(x2, y2);
-    			}
-    			for (var i = 0; i < cliques.length; i++) {
-    				let x2 = cliques[i].point.x*1.4 //+ zoomA.x;
-    				let y2 = cliques[i].point.y*1.4 //+ zoomA.y;
-    				cliques[i].setCoordinates(x2, y2);
-    			}
-    			updateLinks();
-        	break;
-    		case "zoomOut":
-    		console.log("tac");
-        		paper.view.center = event.point;
-    			for (var i = 0; i < syns.length; i++) {
-    				let x2 = syns[i].point.x*0.7 //+ zoomA.x;
-    				let y2 = syns[i].point.y*0.7 //+ zoomA.y;
-    				syns[i].setCoordinates(x2, y2);
-    			}
-    			for (var i = 0; i < cliques.length; i++) {
-    				let x2 = cliques[i].point.x*0.7 //+ zoomA.x;
-    				let y2 = cliques[i].point.y*0.7 //+ zoomA.y;
-    				cliques[i].setCoordinates(x2, y2);
-    			}
-    			updateLinks();
-       		break;
-       		case "Move":
-        		paper.view.center = event.point;
-       		break;
-    		default:
-        		//code block
-			}
-			background.position = paper.view.center;
-    	}
-		/*background.onMouseDrag = function(event) {
-			console.log("toc");
-			if($('#Tool').val()=="Move"){
-				console.log()
-				paper.view.center.x += event.delta.x;
-				paper.view.center.y += event.delta.y;
-			}
-		}*/
-		}
 
-		function updateLinks() {
-			for (var i = 0; i < syns.length; i++) {
-				syns[i].unLinkWithCliques()
-				if(syns[i].clicked){
-					//syns[i].linkWithCliques(1);
-					syns[i].enveloppeCli()
-
-				}else{
-					if(allLinkVisible){
-						syns[i].linkWithCliques(0.1);
+    	//fonction a appeler après un changement du graphe pour redessiner si besoin les enveloppes, les liens, etc..
+		function updateView() {
+			if(allAreasVisible){
+				for (var i = 0; i < syns.length; i++) {
+					if(!syns[i].clicked){
+						syns[i].enveloppeCli();
 					}
 				}
-				
 			}
-			for (var i = 0; i < cliques.length; i++) {
-				cliques[i].unLinkWithWords();
-				if(cliques[i].clicked){
-					cliques[i].linkWithWords(1);
+			else{
+				for (var i = 0; i < syns.length; i++) {
+					if(syns[i].clicked){
+						syns[i].enveloppeCli();
+					}
+				}
+			}
+			if(allLinkVisible){
+				for (var i = 0; i < cliques.length; i++) {
+					cliques[i].unLinkWithWords();
+					if(!cliques[i].clicked){
+						cliques[i].linkWithWords(0.1);
+					}
+					else{
+						cliques[i].linkWithWords(1);
+					}
+				}
+			}
+			else{
+				for (var i = 0; i < cliques.length; i++) {
+					cliques[i].unLinkWithWords();
+					if(cliques[i].clicked){
+						cliques[i].linkWithWords(1);
+					}
 				}
 			}
 		}
@@ -149,12 +60,7 @@
 		
 		
     	
-		var cliques, syns, coords;
-		var extremevalues = [0, 0, 0, 0, 0, 0];
-		var cliVisible = true;
-		var allLinkVisible = false;
-		var axe1 = document.getElementById('axe1');
-		var axe2 = document.getElementById('axe2');
+		
 
 		$('#axe1').change(function(){
 			updateAxis();
@@ -163,15 +69,29 @@
 			updateAxis();
 		});
 
+		function updateAxis(){
+			var x = $('#axe1').val();
+			var y = $('#axe2').val();
+			for (var i = 0; i < cliques.length; i++) {
+				cliques[i].setAxis(x, y);
+			}
+			for (var i = 0; i < syns.length; i++) {
+				syns[i].setAxis(x, y);
+			}
+			updateView();
+		}
+
 		
-		$('#hidecli').change(function(){
-			if($('#hidecli').is(":checked"))
+		$('#showcli').change(function(){
+			if(!$('#showcli').is(":checked"))
 			{
+				cliVisible = true;
 				for (var i = 0; i < cliques.length; i++) {
 					cliques[i].cliVisible = false;
 					cliques[i].pointt.visible = false;
 				}
 			}else{
+				cliVisible = false;
 				for (var i = 0; i < cliques.length; i++) {
 					cliques[i].cliVisible = true;
 					cliques[i].pointt.visible = true;
@@ -179,25 +99,76 @@
 			}
 		})
 
-		$('#showalllink').change(function(){
-			if($('#showalllink').is(":checked"))
-			{
-				allLinkVisible = true;
+		$('#showAreas').change(function(){
+			
+			if($('#showAreas').is(":checked"))
+			{	showAreas = true;
 				for (var i = 0; i < syns.length; i++) {
-					syns[i].linkWithCliques(0.1);
+					if(syns[i].clicked)
+					{
+						syns[i].enveloppeCli();
+					}
 				}
 			}else{
-				allLinkVisible = false;
+				if($('#showallAreas').is(":checked")){
+					$('#showallAreas').prop('checked', false);
+					allAreasVisible = false;
+				}
+				showAreas = false;
 				for (var i = 0; i < syns.length; i++) {
-					syns[i].unLinkWithCliques();
+					if(syns[i].enveloppe != undefined){
+						syns[i].enveloppe.remove();
+					}
 				}
 			}
 		})
+
+		$('#showalllink').change(function(){
+			if($('#showalllink').is(":checked"))
+			{	
+				allLinkVisible = true;
+				for (var i = 0; i < cliques.length; i++) {
+					if(!cliques[i].clicked){
+						cliques[i].linkWithWords(0.1);
+					}
+				}
+			}else{
+				allLinkVisible = false;
+				for (var i = 0; i < cliques.length; i++) {
+					if(!cliques[i].clicked){
+						cliques[i].unLinkWithWords();
+					}
+					
+				}
+			}
+		})
+		$('#showallAreas').change(function(){
+			if(!$('#showAreas').is(":checked")){
+				$('#showAreas').prop('checked', true);
+				showAreas = true;
+			}
+					if($('#showallAreas').is(":checked"))
+					{
+						allAreasVisible = true;
+						for (var i = 0; i < syns.length; i++) {
+							syns[i].enveloppeCli();
+						}
+					}else{
+						allAreasVisible = false;
+						for (var i = 0; i < syns.length; i++) {
+							if(!syns[i].clicked){
+								syns[i].enveloppe.remove();
+							}
+							
+						}
+					}
+				})
 
 		
 		$(document).keypress(function(e) {
 
 			if(e.which == 13) {
+				window.history.pushState("", "", '/'+$("#word").val());
 				$.ajax({
        		url : 'data/'+$("#word").val(),
        		type : 'GET',
@@ -211,7 +182,7 @@
 		});
 
 		$.ajax({
-       		url : 'data/bois',
+       		url : 'data/'+$("#word").val(),
        		type : 'GET',
        		dataType : 'text',
        		success : espsem,
@@ -220,18 +191,7 @@
        		}
 		});
 
-		function updateAxis(){
-			var x = $('#axe1').val();
-			var y = $('#axe2').val();
-			for (var i = 0; i < cliques.length; i++) {
-				cliques[i].setAxis(x, y);
-			}
-			for (var i = 0; i < syns.length; i++) {
-				syns[i].setAxis(x, y);
-			}
-			updateLinks();
-
-		}
+		
 
 		function Syn(asyn, i){
 
@@ -276,12 +236,10 @@
 				this.paths = [];
 				this.enveloppe;
 				
-				
-           		
+				this.html = $("<div class='syn' id='" + this.index + "'></div>").appendTo("#synlist");
+           		this.span = $("<span id='" + this.index + "'>" + this.mot + "</span>").appendTo(this.html);
            		
 
-           		this.html = $("<div class='syn' id='" + this.i + "''>" + this.mot + "</div>").appendTo("#syns");
-           		
            		this.show = function(){
 					
 					this.text.position = new paper.Point(this.point.x, this.point.y - 30);
@@ -298,20 +256,20 @@
 					this.text.visible = true;
 					this.rectangle.visible = true;
 					this.linkPointText.visible = true;
-					
-
 				}.bind(this);
 
 				this.showCliquesHtml = function(){
-					$("#cliques").html("");
-					$("#cliques").append("cliques de " + this.mot + " :");
+
+					$("#clilist").html("");
+					$("#clispan").html("");
+					$("#clispan").append(this.mot);
 					for (var i = 0; i < this.cliques.length; i++) {
-						var html = "<div class='clique' id="+this.cliques[i]+">";
+						var html = "<div class='clique' id="+this.cliques[i].index+">";
 						for (var j = 0; j < this.cliques[i].mots.length; j++) {
 							html = html + this.cliques[i].mots[j].mot + ', ';
 						}
 						html = html + "</div>";
-						$("#cliques").append(html);
+						$("#clilist").append(html);
 					}
 				}.bind(this);
 
@@ -326,7 +284,7 @@
 				}
 
 				this.select = function(){
-					this.html.css("font-weight","Bold");
+					this.span.css("font-weight","Bold");
 					this.circle.fillColor = this.selectedColor;
 					this.text.fillColor = this.selectedColor;
 					this.rectangle.strokeColor=this.selectedColor;
@@ -334,12 +292,11 @@
 				}.bind(this);
 
 				this.unselect = function(event){
-					
-					this.html.css("font-weight","Normal");
-					$("#cliques").html("");
+					this.span.css("font-weight","Normal");
+					$("#clilist").html("");
 				}.bind(this);
 
-				this.linkWithCliques = function(thickness){
+				/*this.linkWithCliques = function(thickness){
 					for (var i = 0; i < this.cliques.length; i++) {
 						//this.cliques[i].show();
 						//this.cliques[i].linkWithWords(thickness/2)
@@ -373,145 +330,162 @@
 					for (var i = 0; i < this.cliques.length; i++) {
 						this.cliques[i].unLinkWithWords();
 					}
-				}
+				}*/
 
 				this.circle.onMouseEnter = function(){
+					this.showCliquesHtml();
 					if(!this.clicked){
 						this.show();
-						this.showCliquesHtml();
-						//this.linkWithCliques(0.5);
-						this.enveloppeCli();
+						if(!allAreasVisible){
+							this.enveloppeCli();
+						}
 						this.circle.scale(1.5);
+						if(this.enveloppe != undefined){
+							if(allAreasVisible){
+								this.enveloppe.strokeWidth = 3;
+							}else{
+								this.enveloppe.strokeWidth = 1;
+							}
+						}
+					}else{
+						if(this.enveloppe != undefined){
+							this.enveloppe.strokeWidth = 3;
+						}
 					}
+					
+					
 				}.bind(this);
 
 				this.circle.onMouseLeave = function(event){
-					
-				if(!this.clicked){
-					this.circle.scale(0.666);
-					this.hide();
-					if(allLinkVisible){
-						this.unLinkWithCliques();
-						this.linkWithCliques(0.1);
-						this.enveloppe.remove();
-					}else{
-						this.enveloppe.remove();
+					if(this.enveloppe != undefined){
+						this.enveloppe.strokeWidth = 1;
 					}
-				}
-				}.bind(this);
-
-				this.enveloppeCli = function(){
-					if (this.cliques.length == 1){
-						this.enveloppe = new paper.Path.Circle(this.point, 10);
-					}else{
-						
-							var convexHull = new ConvexHullGrahamScan();
-							for (var i = 0; i < this.cliques.length; i++) {
-								convexHull.addPoint(this.cliques[i].point.x, this.cliques[i].point.y);
-							}
-							var enveloppePoints = convexHull.getHull();
-							console.log(enveloppePoints);
+					if(!this.clicked){
+						this.circle.scale(0.666);
+						this.hide();
+						if(!allAreasVisible){
 							if(this.enveloppe != undefined){
 								this.enveloppe.remove();
 							}
-							this.enveloppe = new paper.Path(enveloppePoints);
-							this.enveloppe.smooth({ type: 'catmull-rom' });
-							this.enveloppe.closed = true;
-						
-						
+						}else{
+							console.log("bah");
+							this.enveloppe.strokeWidth = 1;
+						}
+					}else{
+						if(this.enveloppe != undefined){
+							if(allAreasVisible){
+								
+							}
+						}
+				}
+				}.bind(this);
+
+				this.circle.onClick = function(event){
+					if(this.clicked){
+						this.clicked=false;
+						this.unselect();
+						if(!allAreasVisible){
+							if(this.enveloppe!=undefined){
+								this.enveloppe.remove();
+							}
+							
+						}
+					}
+					else{
+						this.clicked = true;
+						this.select();
+						//this.enveloppeCli();
+					}
+				}.bind(this);
+
+
+				this.enveloppeCli = function(){
+					console.log(showAreas);
+					if(showAreas){
+
+
+					if (this.cliques.length == 1){
+						this.enveloppe = new paper.Path.Circle(this.point, 8);
+					} else if (this.cliques.length == 2) {
+
+							let center = new paper.Point((this.cliques[0].point.x + this.cliques[1].point.x) / 2, (this.cliques[0].point.y + this.cliques[1].point.y) / 2);
+							let length = Math.sqrt(Math.pow(this.cliques[0].point.x - this.cliques[1].point.x, 2) + Math.pow(this.cliques[0].point.y - this.cliques[1].point.y, 2));
+							length = length + 10;
+							var rect = new paper.Rectangle(0, 0, length, 12);
+							//on positionne le rectangle : 
+							rect.center = center;
+							rect = new paper.Path.Rectangle(rect, 6);
+							let angle =  Math.atan((this.cliques[0].point.y - this.cliques[1].point.y) / (this.cliques[0].point.x - this.cliques[1].point.x));
+
+							angle = angle * 180 / 3.14;
+							rect.rotate(angle);
+							this.enveloppe = rect;
+					} else {
+						var convexHull = new ConvexHullGrahamScan();
+						for (var i = 0; i < this.cliques.length; i++) {
+							convexHull.addPoint(this.cliques[i].point.x, this.cliques[i].point.y);
+						}
+						var enveloppePoints = convexHull.getHull();
+						console.log(enveloppePoints);
+						if(this.enveloppe != undefined){
+							this.enveloppe.remove();
+						}
+						this.enveloppe = new paper.Path(enveloppePoints);
+						this.enveloppe.closed = true;
+						this.enveloppe.smooth({ type: 'catmull-rom' });
 					}
 					
 					this.enveloppe.strokeColor = "red";
 					this.enveloppe.strokeWidth = 1;
-					
-					
-				}.bind(this);
-
-				this.circle.onClick = function(event){
-					//console.log(this.clicked);
-					if(this.clicked){
-						this.clicked=false;
-						this.unselect();
-						if(allLinkVisible){
-							this.linkWithCliques(0.1);
-							this.enveloppe.remove();
-						}else{
-							this.enveloppe.remove();
+					this.enveloppe.onMouseEnter = function(){
+						this.enveloppe.strokeWidth = 3;
+						if(!this.clicked){
+							this.show();
 						}
-					}
-					else{
-						this.clicked = true;
-						this.select();
-						this.enveloppeCli();
-					}
+					}.bind(this);
+					this.enveloppe.onMouseLeave = function(){
+						this.enveloppe.strokeWidth = 1;
+						if(!this.clicked){
+							this.hide();
+						}
+					}.bind(this);
+				}
+					
 				}.bind(this);
 
-				this.text.onMouseEnter = function(){
+				
+
+				this.label.onMouseEnter = function(){
+					if(this.enveloppe != undefined){
+						this.enveloppe.strokeWidth = 3;
+					}
 					this.showCliquesHtml();
 				}.bind(this);
 
-				this.text.onMouseLeave = function(event){
-				
+				this.label.onMouseLeave = function(event){
+					if(this.enveloppe != undefined){
+						this.enveloppe.strokeWidth = 1;
+					}
+					if(!showallAreas){
+						this.enveloppe.remove();
+					}
+					
 				}.bind(this);
 				
-				this.text.onClick = function(event){
+				this.label.onClick = function(event){
 					if(event.delta.x == 0 && event.delta.y == 0){
 						if(this.clicked){
 							this.clicked=false;
+							this.hide();
 							this.unselect();
 							this.circle.scale(0.666);
-							if(allLinkVisible){
-								this.linkWithCliques(0.1);
-								this.enveloppe.remove();
-							}else{
+							if(!allAreasVisible){
 								this.enveloppe.remove();
 							}
+							
 						}
 					}
 				}.bind(this);
-
-				this.html.click(function(){
-					if(this.clicked){
-						this.clicked=false;
-						this.unselect();
-						if(allLinkVisible){
-							this.linkWithCliques(0.1);
-							this.enveloppe.remove();
-						}else{
-							this.enveloppe.remove();
-						}
-					}
-					else{
-						this.clicked = true;
-						this.select();
-						this.enveloppeCli();
-					}						
-				}.bind(this));
-
-				this.html.mouseenter(function(){
-					if(!this.clicked){
-						this.show();
-						this.showCliquesHtml();
-						//this.linkWithCliques(0.5);
-						this.enveloppeCli();
-						this.circle.scale(1.5);
-					}			
-				}.bind(this));
-
-				this.html.mouseleave(function(){
-					if(!this.clicked){
-					this.circle.scale(0.666);
-					this.hide();
-					this.enveloppe.remove();
-					if(allLinkVisible){
-						this.unLinkWithCliques();
-						this.linkWithCliques(0.1);
-						
-					}else{
-						this.enveloppe.remove();
-					}
-				}				
-				}.bind(this));
 
 				this.label.onMouseDrag = function(event) {
            			this.label.position.x += event.delta.x;
@@ -528,17 +502,70 @@
     				this.linkPointText.strokeColor = this.selectedColor;
 					this.linkPointText.strokeWidth = 1;
 				}
+
+				this.span.click(function(){
+					if(this.clicked){
+						this.clicked=false;
+						this.unselect();
+						if(!allAreasVisible){
+							if(this.enveloppe!=undefined){
+								this.enveloppe.remove();
+							}
+							
+						}
+					}
+					else{
+						this.clicked = true;
+						this.select();
+						//this.enveloppeCli();
+					}						
+				}.bind(this));
+
+				this.span.mouseenter(function(){
+					if(!this.clicked){
+						this.show();
+						this.showCliquesHtml();
+						//this.linkWithCliques(0.5);
+						if(!allAreasVisible){
+							this.enveloppeCli();
+						}else{
+							this.enveloppe.strokeWidth = 3;
+						}
+						this.circle.scale(1.5);
+					}else{
+						this.enveloppe.strokeWidth = 3;
+					}			
+				}.bind(this));
+
+				this.span.mouseleave(function(){
+					if(!this.clicked){
+					this.circle.scale(0.666);
+					this.hide();
+					if(!allAreasVisible){
+						if(this.enveloppe!=undefined){
+								this.enveloppe.remove();
+							}
+					}else{
+						this.enveloppe.strokeWidth = 1;
+					}
+				}else{
+					this.enveloppe.strokeWidth = 1;
+				}		
+				}.bind(this));
+
+				
 				
 
 				this.setAxis = function(x, y){
-						
-						this.setCoordinates(0.4*this.coords[x]*paper.view.bounds.width/extremevalues[x], 0.4*this.coords[y]*paper.view.bounds.height/extremevalues[y]);
+						x = 0.4*this.coords[x]*paper.view.bounds.width/extremevalues[x];
+						y = 0.4*this.coords[y]*paper.view.bounds.height/extremevalues[y];
+						this.setCoordinates(x, y);
 				}.bind(this);
 
 				this.setCoordinates = function(x, y){
-					this.point.x =x;
+
+					this.point.x = x;
 					this.point.y = y;
-					//console.log(this.point.x, this.point.y);
 					
 					this.circle.position = this.point;
 					this.text.position = new paper.Point(this.point.x, this.point.y - 30);
@@ -548,12 +575,9 @@
 					if(this.enveloppe != undefined){
 						this.enveloppe.remove();
 					}
-					
-					
 					if(this.clicked){
 						this.show();
 						this.select();
-						//this.enveloppeCli();
 					}
 					
 
@@ -572,7 +596,6 @@
 				this.mots = clique;
 				for (var i = 0; i < this.mots.length; i++) {
 					for (var j = 0; j < syns.length; j++) {
-
 						if(this.mots[i] == syns[j].mot){
 							this.mots[i]= syns[j];
 						}
@@ -581,14 +604,13 @@
 				this.clicked = false;
 				this.coords = coords[this.index];
            		this.point = new paper.Point(0,0);
-           		this.cliVisible = true;
+           		this.cliVisible = false;
 
            		this.text = new paper.PointText(new paper.Point(this.point.x, this.point.y));
            		this.text.visible = false;
 				this.text.justification = 'center';
 				this.text.fillColor = this.gray;
 				this.text.fontSize = 15;
-				this.text.content = this.mot;
 				this.labelText = "";
 				for (var i = 0; i < this.mots.length; i++) {
 					if(i == 0){
@@ -602,13 +624,13 @@
 
 				
 
-				let b = new paper.Rectangle(this.text.bounds);;
+				let b = new paper.Rectangle(this.text.bounds);
 				b.width = b.width*1.1;
 				this.rectangle = new paper.Path.Rectangle(b);
 				this.rectangle.strokeColor = this.gray;
 				this.rectangle.visible = false;
 
-				let a = new paper.Point(this.text.bounds.bottom, this.text.bounds.left)
+				let a = new paper.Point(this.text.bounds.bottom, this.text.bounds.left);
            		this.linkPointText = new paper.Path.Line(this.point, a);
            		this.linkPointText.strokeColor = this.snapColor;
 				this.linkPointText.visible = false;
@@ -636,8 +658,7 @@
            			this.pointt.strokeWidth = 2;
            			this.text.position = new paper.Point(this.point.x, this.point.y - 30);
 					this.text.fillColor = this.gray;
-					
-					
+					this.rectangle.strokeColor = this.gray;
 					this.rectangle.position = this.text.position;
 					
 					this.linkPointText.firstSegment.point = this.point;
@@ -648,22 +669,6 @@
 					this.rectangle.visible = true;
 					this.linkPointText.visible = true;
            		}.bind(this);
-
-           		this.label.onMouseDrag = function(event) {
-           			this.label.position.x += event.delta.x;
-    				this.label.position.y += event.delta.y;
-					this.updateLabel();
-					
-				}.bind(this);
-
-           		this.updateLabel= function(){
-					this.linkPointText.firstSegment.point = this.point;
-					let a = new paper.Point(this.text.bounds.left, this.text.bounds.bottom);
-					//this.text.rectangle.position = this.text.position;
-					this.linkPointText.lastSegment.point = a;
-    				this.linkPointText.strokeColor = this.gray;
-					this.linkPointText.strokeWidth = 1;
-				}
 
            		this.hide = function() {
            			this.pointt.scale(0.666);
@@ -676,82 +681,189 @@
 					this.rectangle.visible = false;
            		}.bind(this);
 
+           		this.select = function(){
+           			this.text.fillColor = "black";
+           			this.linkPointText.strokeColor = "black";
+           			this.rectangle.strokeColor = "black";
+           		}
+
+           		
+
+           		this.updateLabel= function(){
+					this.linkPointText.firstSegment.point = this.point;
+					let a = new paper.Point(this.text.bounds.left, this.text.bounds.bottom);
+					this.linkPointText.lastSegment.point = a;
+    				this.linkPointText.strokeWidth = 1;
+				}
+
+				this.showWords= function(yes){
+					for (var i = 0; i < this.mots.length; i++) {
+						if(!this.mots[i].clicked){
+							if(yes){
+								this.mots[i].show();
+							}
+							else{
+								this.mots[i].hide();
+							}
+						}
+					}
+				}.bind(this);
+
+           		
+
            		this.linkWithWords = function(thickness){
-           			console.log(this);
            			for (var i = 0; i < this.mots.length; i++) {
-           				
            				let a = new paper.Path.Line(this.point, this.mots[i].point);
 						a.strokeColor = 'black';
 						a.strokeWidth = thickness;
 						this.paths.push(a);
            			}
            		}.bind(this);
-           		this.unLinkWithWords = function(thickness){
+
+           		this.unLinkWithWords = function(){
            			for (var i = 0; i < this.paths.length; i++) {
 						this.paths[i].remove();
 					}
            		}.bind(this);
 
+           		this.label.onMouseDrag = function(event) {
+           			this.label.position.x += event.delta.x;
+    				this.label.position.y += event.delta.y;
+					this.updateLabel();
+					
+				}.bind(this);
+
+				this.label.onClick = function(event) {
+					if(event.delta.x == 0 && event.delta.y == 0){
+						this.clicked = false;
+						this.hide();
+						this.text.visible = false;
+						this.unLinkWithWords();
+						if(allLinkVisible){
+							//this.linkWithWords(0.1);
+						}
+					}
+           		}.bind(this);
+
+           		this.label.onMouseEnter = function(event) {
+					this.showWords(true);
+           		}.bind(this);
+
+           		this.label.onMouseLeave = function(event) {
+					this.showWords(false);
+           		}.bind(this);
+
            		this.pointt.onMouseEnter = function(event){
+           			this.showWords(true);
            			if(!this.clicked){
            				this.show();
-						this.linkWithWords(0.5);
+           				//this.linkWithWords(0.5);
            			}
-					
-					//this.text.visible = true;
-				}.bind(this);
-				this.pointt.onMouseLeave = function(event){
-				if(!this.clicked){
-					this.hide();
-					this.text.visible = false;
-					this.unLinkWithWords();
-				}
 				}.bind(this);
 				this.pointt.onClick = function(event){
 					if(this.clicked){
 						this.clicked = false;
-
-						//this.linkWithWords(1);
+						this.unLinkWithWords();
+						//this.linkWithWords(0.5);
 					}else{
+						//this.linkWithWords(1);
 						this.clicked = true;
+						this.select();
 					}
-					
 				}.bind(this);
+				this.pointt.onMouseLeave = function(event){
+					this.showWords(false);
+					if(!this.clicked){
+						this.hide();
+						this.text.visible = false;
+						this.unLinkWithWords();
+						if(allLinkVisible){
+							//this.linkWithWords(0.1);
+						}
+					}
+				}.bind(this);
+				
 				this.setAxis = function(x, y){
 					this.setCoordinates(0.4*this.coords[x]*paper.view.bounds.width/extremevalues[x], 0.4*this.coords[y]*paper.view.bounds.height/extremevalues[y])
 
 				}.bind(this);
 
 				this.setCoordinates= function(x, y){
+
 					this.point.x = x;
 					this.point.y = y;
 					this.updateLabel();
 					this.pointt.position = this.point;
-					this.pointt.visible = true;
+					if(cliVisible){
+						this.pointt.visible = true;
+					}
+					
 				}
 
 		}
 
 		function clearpage(){
-			syns = null;
-			cliques = null;
-			coords=null;
-			paper.project.clear();
-			$("#cliques").html("");
-			$("#syns").html("");
-			$('#axe1').val(0);
-			$('#axe2').val(1);
+			
 		}
 
 		function espsem(data, statut){
 			//netoyer la page avant d'ajouter les nouvelles données
-			clearpage();
-			init();
+			syns = null;
+			cliques = null;
+			coords=null;
+			paper.project.clear();
+			$("#clilist").html("");
+			$("#clispan").html("");
+			$("#synlist").html("");
+			$('#axe1').val(0);
+			$('#axe2').val(1);
+			background = new paper.Path.Rectangle(paper.view.bounds);
+			background.fillColor = "White";
 
+		background.onMouseDown = function(event) {
+			console.log("quoi");
+			switch($('#Tool').val()) {
+    		case "zoomIn":
+        		paper.view.center = event.point;
+				for (var i = 0; i < syns.length; i++) {
+    				let x2 = syns[i].point.x*1.4;
+    				let y2 = syns[i].point.y*1.4;
+    				syns[i].setCoordinates(x2, y2);
+    			}
+    			for (var i = 0; i < cliques.length; i++) {
+    				let x2 = cliques[i].point.x*1.4;
+    				let y2 = cliques[i].point.y*1.4;
+    				cliques[i].setCoordinates(x2, y2);
+    			}
+        	break;
+    		case "zoomOut":
+    		console.log("tac");
+        		paper.view.center = event.point;
+    			for (var i = 0; i < syns.length; i++) {
+    				let x2 = syns[i].point.x*0.7;
+    				let y2 = syns[i].point.y*0.7 ;
+    				syns[i].setCoordinates(x2, y2);
+    			}
+    			for (var i = 0; i < cliques.length; i++) {
+    				let x2 = cliques[i].point.x*0.7;
+    				let y2 = cliques[i].point.y*0.7;
+    				cliques[i].setCoordinates(x2, y2);
+    			}
+    		break;
+       		case "Move":
+        		paper.view.center = event.point;
+       		break;
+    		default:
+        		//code block
+			}
+			background.position = paper.view.center;
+			updateView();
+    	}
 			
 			data = JSON.parse(data);
-			cliques = data.cliques;
 			console.log(data);
+			
+			cliques = data.cliques;
 			syns = data.synonymes;
 			coords = data.coords;
 			getExtremsCoords();
@@ -775,7 +887,7 @@
            			}
            		}
 			}
-			//console.log(cliques, syns);
+			
 			for (var i = 0; i < syns.length; i++) {
 				syns[i].setAxis(0,1);
 			}
@@ -788,6 +900,7 @@
 
 
 		function getExtremsCoords(){
+			extremevalues = [0, 0, 0, 0, 0, 0];
 			for (var i = 0; i < 6; i++) {
 				for (var j = 0; j < coords.length; j++) {
 					if (Math.abs(coords[j][i])>extremevalues[i]){
@@ -797,12 +910,6 @@
 			}
 		}
 		
-		paper.view.onFrame = function(event) {
-
-		}
+		
 	}
-    </script>
-</body>
-</html>
-
-
+    

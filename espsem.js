@@ -33,7 +33,6 @@ function readFiles(next){
 
       }
 
-      //console.log(data[0]);
       dico = new Map(data);
       data= null;
 
@@ -52,7 +51,7 @@ function readFiles(next){
           });
         }
         data2=null;
-        console.log("loading...");
+        console.log("loading dico...");
     fs.readFile("clicmemo_171204.visu",  function(err, data3) {
           
           if (err) throw err;
@@ -72,7 +71,6 @@ function readFiles(next){
           splice=null;
           data3=null;
           
-          //console.log(dico.get('dieu'));
     fs.readFile("indexacp_171204.extr",  function(err, data4) {
           
          if (err) throw err;
@@ -87,7 +85,6 @@ function readFiles(next){
             dico.set(data4[j][0], a);
           }
           data4=null;
-          //console.log(dico.get('dieu'));
           fs.readFile("acpmemo_171204.extr",  function(err, data5) {
           if (err) throw err;
           data5 = data5.toString('binary');
@@ -109,57 +106,31 @@ function readFiles(next){
         });
         });
         });
-      //console.log(dico.get('Académie française'));
     
     });
 }
 
-readFiles(function(result){
-
-  //console.log(result);
-  //binds words with their coords :
-  /*for (var i = 0; i < result.synonymes.length; i++) {
-    result.synonymes[i] =  {
-      mot : result.synonymes[i],
-      coord : result.coordonnees[i + result.cliques.length]
-    };
-  }*/
-
-  //binds cliques with their coords and words :
-  /*for (var i = 0; i < result.cliques.length; i++) {
-    var clique =  {
-      mots : []
-    };
-    for (var j = 0; j < result.cliques[i].length; j++) {
-      var b = parseInt(result.cliques[i][j], 10) - 1;
-      clique.mots[j] = b;
-    }
-    result.cliques[i] = clique;
-  }*/
-
-  
-});
+readFiles(function(result){});
 
 app.get('/data/*', function (req, res) {
     
 
     req = req.originalUrl.split("/");
+    console.log("reçu requête pour : " + req);
     req = req[req.length - 1];
     req = decode(req);
     console.log(req);
-    console.log(dico.has(req));
     if(dico.has(req)){
-      console.log("okkk");
+      console.log("send JSON dico.get : " + req);
       res.json(dico.get(req));
     }else{
-      console.log("not okkk");
       res.json("ERROR WORD DOESN'T EXIST");
     }
    });
 app.get('/*', function (req, res) {
   
   req = req.originalUrl.split("/");
-  console.log(req);
+  console.log("reçu requête pour : " + req);
   req = req[req.length - 1];
   if(req==""){
     req = 'mot';
@@ -175,9 +146,7 @@ app.get('/*', function (req, res) {
 
 
 httpserver.listen(8084, 'localhost', function () {
-  
-  console.log('ok');
-
+  console.log('Server ouvert');
 });
 
 
