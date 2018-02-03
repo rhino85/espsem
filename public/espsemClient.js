@@ -215,7 +215,7 @@ window.onload = function() {
            		
            		this.point = new paper.Point(0,0);
 
-           		this.circle = new paper.Path.Circle(this.point, 4);
+           		this.circle = new paper.Path.Circle(this.point, 2.5);
            		this.circle.fillColor = this.normalColor;
            		
 				this.text = new paper.PointText(new paper.Point(this.point.x, this.point.y - 30));
@@ -658,7 +658,7 @@ window.onload = function() {
            		//this.pointt = new paper.CompoundPath({children : [c, d]});
            		//this.pointt.strokeWidth = 1;
            		//this.pointt.strokeColor = "black";
-           		this.pointt = new paper.Path.Circle(this.point, 3);
+           		this.pointt = new paper.Path.Circle(this.point, 1 + 0.4*Math.pow(this.mots.length, 1.5));
            		this.pointt.fillColor = this.lightblue;
            		this.pointt.visible = false;
            		this.paths = [];
@@ -768,10 +768,10 @@ window.onload = function() {
            		}.bind(this);
 
            		this.pointt.onMouseEnter = function(event){
-           			this.showWords(true);
+           			//this.showWords(true);
            			if(!this.clicked){
            				this.show();
-           				//this.linkWithWords(0.5);
+           				this.linkWithWords(0.5);
            			}
 				}.bind(this);
 				this.pointt.onClick = function(event){
@@ -792,7 +792,7 @@ window.onload = function() {
 						this.text.visible = false;
 						this.unLinkWithWords();
 						if(allLinkVisible){
-							//this.linkWithWords(0.1);
+							this.linkWithWords(0.1);
 						}
 					}
 				}.bind(this);
@@ -928,6 +928,12 @@ window.onload = function() {
            				}
            			}
            		}
+           		if(syns[i].cliques.length < 100){
+           			syns[i].circle.scale(1 + 0.1*syns[i].cliques.length);
+           		}else{
+           			syns[i].circle.scale(1 + 0.1*100);
+           		}
+           		
 			}
 			
 			for (var i = 0; i < syns.length; i++) {
