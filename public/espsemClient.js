@@ -197,9 +197,13 @@ window.onload = function() {
 		function Syn(asyn, i){
 
 				//degradé de vert en fonction des états d'un mot
-				this.normalColor = new paper.Color(0, 0.65, 0);
-				this.snapColor = new paper.Color(0, 0.55, 0);
-				this.selectedColor = new paper.Color(0, 0.4, 0);
+				this.normalColor = new paper.Color(0, 0.6, 0, 0.7);
+				this.snapColor = new paper.Color(0, 0.6, 0, 0.7);
+				this.selectedColor = new paper.Color(0, 0.6, 0, 1);
+
+				//couleur des enveloppes
+				this.enveloppeColor1 = new paper.Color(1, 0, 0, 0.6);
+				this.enveloppeColor2 = new paper.Color(1, 0, 0, 1);
 
 
 				this.index = i;
@@ -214,17 +218,18 @@ window.onload = function() {
            		this.circle = new paper.Path.Circle(this.point, 4);
            		this.circle.fillColor = this.normalColor;
            		
-				this.text = new paper.PointText(new paper.Point(this.point.x, this.point.y - 50/paper.view.zoom));
+				this.text = new paper.PointText(new paper.Point(this.point.x, this.point.y - 30));
            		this.text.visible = false;
 				this.text.justification = 'center';
-				this.text.fillColor = this.normalColor;
-				this.text.fontSize = 15;
+				this.text.fillColor = this.selectedColor;
+				this.text.fontSize = 17;
 				this.text.content = this.mot;
 				
 				let b = new paper.Rectangle(this.text.bounds);;
-				b.width = b.width*1.1;
+				b.width = b.width*1.3;
+				b.height = b.height*1.2; 
 				this.rectangle = new paper.Path.Rectangle(b);
-				this.rectangle.strokeColor = this.snapColor;
+				this.rectangle.strokeColor = this.selectedColor;
 				this.rectangle.visible = false;
 
 				let a = new paper.Point(this.text.bounds.bottom, this.text.bounds.left)
@@ -297,20 +302,12 @@ window.onload = function() {
 					$("#clilist").html("");
 				}.bind(this);
 
-				/*this.linkWithCliques = function(thickness){
+				this.linkWithCliques = function(thickness){
 					for (var i = 0; i < this.cliques.length; i++) {
-						//this.cliques[i].show();
-						//this.cliques[i].linkWithWords(thickness/2)
-						let a = new paper.Path.Line(this.point, this.cliques[i].point);
-						if(this.cliques[i].cliVisible){
-							this.cliques[i].pointt.visible = true;
-						}
-						a.strokeColor = 'black';
-						a.strokeWidth = thickness/paper.view.zoom;
-						this.paths.push(a);
+						this.cliques[i].pointt
 					}
-					this.linkVisible = true;
 				}.bind(this);
+				/*
 				this.unLinkWithCliques = function(){
 					this.linkVisible = false;
 					for (var i = 0; i < this.paths.length; i++) {
@@ -343,14 +340,17 @@ window.onload = function() {
 						this.circle.scale(1.5);
 						if(this.enveloppe != undefined){
 							if(allAreasVisible){
-								this.enveloppe.strokeWidth = 3;
+								this.enveloppe.strokeWidth = 2;
+								this.enveloppe.strokeColor = this.enveloppeColor2;
 							}else{
 								this.enveloppe.strokeWidth = 1;
+								this.enveloppe.strokeColor = this.enveloppeColor1;
 							}
 						}
 					}else{
 						if(this.enveloppe != undefined){
-							this.enveloppe.strokeWidth = 3;
+							this.enveloppe.strokeWidth = 2;
+							this.enveloppe.strokeColor = this.enveloppeColor2;
 						}
 					}
 					
@@ -360,6 +360,7 @@ window.onload = function() {
 				this.circle.onMouseLeave = function(event){
 					if(this.enveloppe != undefined){
 						this.enveloppe.strokeWidth = 1;
+						this.enveloppe.strokeColor = this.enveloppeColor1;
 					}
 					if(!this.clicked){
 						this.circle.scale(0.666);
@@ -371,6 +372,7 @@ window.onload = function() {
 						}else{
 							console.log("bah");
 							this.enveloppe.strokeWidth = 1;
+							this.enveloppe.strokeColor = this.enveloppeColor1;
 						}
 					}else{
 						if(this.enveloppe != undefined){
@@ -408,16 +410,16 @@ window.onload = function() {
 						}
 
 					if (this.cliques.length == 1){
-						this.enveloppe = new paper.Path.Circle(this.point, 8);
+						this.enveloppe = new paper.Path.Circle(this.point, 9);
 					} else if (this.cliques.length == 2) {
 
 							let center = new paper.Point((this.cliques[0].point.x + this.cliques[1].point.x) / 2, (this.cliques[0].point.y + this.cliques[1].point.y) / 2);
 							let length = Math.sqrt(Math.pow(this.cliques[0].point.x - this.cliques[1].point.x, 2) + Math.pow(this.cliques[0].point.y - this.cliques[1].point.y, 2));
 							length = length + 10;
-							var rect = new paper.Rectangle(0, 0, length, 12);
+							var rect = new paper.Rectangle(0, 0, length, 14);
 							//on positionne le rectangle : 
 							rect.center = center;
-							rect = new paper.Path.Rectangle(rect, 6);
+							rect = new paper.Path.Rectangle(rect, 7);
 							let angle =  Math.atan((this.cliques[0].point.y - this.cliques[1].point.y) / (this.cliques[0].point.x - this.cliques[1].point.x));
 
 							angle = angle * 180 / 3.14;
@@ -435,16 +437,18 @@ window.onload = function() {
 						this.enveloppe.smooth({ type: 'catmull-rom' });
 					}
 					
-					this.enveloppe.strokeColor = "red";
+					this.enveloppe.strokeColor = this.enveloppeColor1;
 					this.enveloppe.strokeWidth = 1;
 					this.enveloppe.onMouseEnter = function(){
-						this.enveloppe.strokeWidth = 3;
+						this.enveloppe.strokeWidth = 2;
+						this.enveloppe.strokeColor = this.enveloppeColor2;
 						if(!this.clicked){
 							this.show();
 						}
 					}.bind(this);
 					this.enveloppe.onMouseLeave = function(){
 						this.enveloppe.strokeWidth = 1;
+						this.enveloppe.strokeColor = this.enveloppeColor1;
 						if(!this.clicked){
 							this.hide();
 						}
@@ -457,7 +461,8 @@ window.onload = function() {
 
 				this.label.onMouseEnter = function(){
 					if(this.enveloppe != undefined){
-						this.enveloppe.strokeWidth = 3;
+						this.enveloppe.strokeWidth = 2;
+						this.enveloppe.strokeColor = this.enveloppeColor2;
 					}
 					this.showCliquesHtml();
 				}.bind(this);
@@ -465,6 +470,7 @@ window.onload = function() {
 				this.label.onMouseLeave = function(event){
 					if(this.enveloppe != undefined){
 						this.enveloppe.strokeWidth = 1;
+						this.enveloppe.strokeColor = this.enveloppeColor1;
 					}
 					if(!showallAreas){
 						this.enveloppe.remove();
@@ -529,11 +535,13 @@ window.onload = function() {
 						if(!allAreasVisible){
 							this.enveloppeCli();
 						}else{
-							this.enveloppe.strokeWidth = 3;
+							this.enveloppe.strokeWidth = 2;
+							this.enveloppe.strokeColor = this.enveloppeColor2;
 						}
 						this.circle.scale(1.5);
 					}else{
-						this.enveloppe.strokeWidth = 3;
+						this.enveloppe.strokeWidth = 2;
+						this.enveloppe.strokeColor = this.enveloppeColor2;
 					}			
 				}.bind(this));
 
@@ -547,9 +555,11 @@ window.onload = function() {
 							}
 					}else{
 						this.enveloppe.strokeWidth = 1;
+						this.enveloppe.strokeColor = this.enveloppeColor1;
 					}
 				}else{
 					this.enveloppe.strokeWidth = 1;
+					this.enveloppe.strokeColor = this.enveloppeColor1;
 				}		
 				}.bind(this));
 
@@ -591,7 +601,8 @@ window.onload = function() {
 
 
 		function Cli(clique, i){
-				this.gray = new paper.Color(0.5);
+				this.lightblue = new paper.Color(0, 0, 1, 0.5);
+				this.hardblue = new paper.Color(0, 0, 1, 1);
 				this.index = i;
 				this.mots = clique;
 				for (var i = 0; i < this.mots.length; i++) {
@@ -609,7 +620,7 @@ window.onload = function() {
            		this.text = new paper.PointText(new paper.Point(this.point.x, this.point.y));
            		this.text.visible = false;
 				this.text.justification = 'center';
-				this.text.fillColor = this.gray;
+				this.text.fillColor = this.lightblue;
 				this.text.fontSize = 15;
 				this.labelText = "";
 				for (var i = 0; i < this.mots.length; i++) {
@@ -622,17 +633,16 @@ window.onload = function() {
 				}
 				this.text.content = this.labelText;
 
-				
-
 				let b = new paper.Rectangle(this.text.bounds);
-				b.width = b.width*1.1;
+				b.width = b.width*1.2;
+				b.height = b.height*1.1;
 				this.rectangle = new paper.Path.Rectangle(b);
-				this.rectangle.strokeColor = this.gray;
+				this.rectangle.strokeColor = this.lightblue;
 				this.rectangle.visible = false;
 
 				let a = new paper.Point(this.text.bounds.bottom, this.text.bounds.left);
            		this.linkPointText = new paper.Path.Line(this.point, a);
-           		this.linkPointText.strokeColor = this.snapColor;
+           		this.linkPointText.strokeColor = this.lightblue;
 				this.linkPointText.visible = false;
 
 				this.label = new paper.Group([this.text, this.rectangle]); 
@@ -645,9 +655,11 @@ window.onload = function() {
     				from: [0, -5],
     				to: [0, 5],
   				});
-           		this.pointt = new paper.CompoundPath({children : [c, d]});
-           		this.pointt.strokeWidth = 1;
-           		this.pointt.strokeColor = "black";
+           		//this.pointt = new paper.CompoundPath({children : [c, d]});
+           		//this.pointt.strokeWidth = 1;
+           		//this.pointt.strokeColor = "black";
+           		this.pointt = new paper.Path.Circle(this.point, 3);
+           		this.pointt.fillColor = this.lightblue;
            		this.pointt.visible = false;
            		this.paths = [];
 
@@ -655,15 +667,16 @@ window.onload = function() {
 
            		this.show = function() {
            			this.pointt.scale(1.5);
-           			this.pointt.strokeWidth = 2;
+           			this.pointt.fillColor = this.hardblue;
+           			//this.pointt.strokeWidth = 2;
            			this.text.position = new paper.Point(this.point.x, this.point.y - 30);
-					this.text.fillColor = this.gray;
-					this.rectangle.strokeColor = this.gray;
+					this.text.fillColor = this.lightblue;
+					this.rectangle.strokeColor = this.lightblue;
 					this.rectangle.position = this.text.position;
 					
 					this.linkPointText.firstSegment.point = this.point;
 					this.linkPointText.lastSegment.point = new paper.Point(this.text.bounds.left, this.text.bounds.bottom);
-    				this.linkPointText.strokeColor = this.gray;
+    				this.linkPointText.strokeColor = this.lightblue;
 					this.linkPointText.strokeWidth = 1;
 					this.text.visible = true;
 					this.rectangle.visible = true;
@@ -672,19 +685,20 @@ window.onload = function() {
 
            		this.hide = function() {
            			this.pointt.scale(0.666);
-           			this.pointt.strokeWidth = 1;
+           			this.pointt.fillColor = this.lightblue;
+           			//this.pointt.strokeWidth = 1;
            			this.labelVisible = false;
 					this.linkPointText.visible = false;
 					
-					this.linkPointText.strokeColor = this.gray;
+					this.linkPointText.strokeColor = this.lightblue;
 					this.text.visible = false;
 					this.rectangle.visible = false;
            		}.bind(this);
 
            		this.select = function(){
-           			this.text.fillColor = "black";
-           			this.linkPointText.strokeColor = "black";
-           			this.rectangle.strokeColor = "black";
+           			this.text.fillColor = this.hardblue;
+           			this.linkPointText.strokeColor = this.hardblue;
+           			this.rectangle.strokeColor = this.hardblue;
            		}
 
            		
