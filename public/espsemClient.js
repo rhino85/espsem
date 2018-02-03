@@ -5,9 +5,10 @@ window.onload = function() {
 			canvas.height = window.innerHeight*0.80;
 			paper.setup(canvas);
 			paper.view.translate(paper.view.center);
+			//paper.view.rotate(180);
 		var background = new paper.Path.Rectangle(paper.view.bounds);
 			background.fillColor = "White";
-			var cliques, syns, coords;
+		var cliques, syns, coords;
 		var extremevalues = [0, 0, 0, 0, 0, 0];
 		var cliVisible = false;
 		var allLinkVisible = false;
@@ -402,7 +403,9 @@ window.onload = function() {
 				this.enveloppeCli = function(){
 					console.log(showAreas);
 					if(showAreas){
-
+						if(this.enveloppe != undefined){
+							this.enveloppe.remove();
+						}
 
 					if (this.cliques.length == 1){
 						this.enveloppe = new paper.Path.Circle(this.point, 8);
@@ -426,10 +429,7 @@ window.onload = function() {
 							convexHull.addPoint(this.cliques[i].point.x, this.cliques[i].point.y);
 						}
 						var enveloppePoints = convexHull.getHull();
-						console.log(enveloppePoints);
-						if(this.enveloppe != undefined){
-							this.enveloppe.remove();
-						}
+						
 						this.enveloppe = new paper.Path(enveloppePoints);
 						this.enveloppe.closed = true;
 						this.enveloppe.smooth({ type: 'catmull-rom' });
@@ -817,51 +817,79 @@ window.onload = function() {
 			$("#synlist").html("");
 			$('#axe1').val(0);
 			$('#axe2').val(1);
-			background = new paper.Path.Rectangle(paper.view.bounds);
-			background.fillColor = "White";
+			$('#Tool').val(0);
 
-		background.onMouseDown = function(event) {
-			console.log("quoi");
-			switch($('#Tool').val()) {
-    		case "zoomIn":
-        		paper.view.center = event.point;
-				for (var i = 0; i < syns.length; i++) {
-    				let x2 = syns[i].point.x*1.4;
-    				let y2 = syns[i].point.y*1.4;
-    				syns[i].setCoordinates(x2, y2);
-    			}
-    			for (var i = 0; i < cliques.length; i++) {
-    				let x2 = cliques[i].point.x*1.4;
-    				let y2 = cliques[i].point.y*1.4;
-    				cliques[i].setCoordinates(x2, y2);
-    			}
-        	break;
-    		case "zoomOut":
-    		console.log("tac");
-        		paper.view.center = event.point;
-    			for (var i = 0; i < syns.length; i++) {
-    				let x2 = syns[i].point.x*0.7;
-    				let y2 = syns[i].point.y*0.7 ;
-    				syns[i].setCoordinates(x2, y2);
-    			}
-    			for (var i = 0; i < cliques.length; i++) {
-    				let x2 = cliques[i].point.x*0.7;
-    				let y2 = cliques[i].point.y*0.7;
-    				cliques[i].setCoordinates(x2, y2);
-    			}
-    		break;
-       		case "Move":
-        		paper.view.center = event.point;
-       		break;
-    		default:
-        		//code block
+			$('#showAreas').prop('checked', false);
+			$('#showalllink').prop('checked', false);
+			$('#showallAreas').prop('checked', false);
+			$('#showcli').prop('checked', false);
+			cliVisible = false;
+			allLinkVisible = false;
+			allAreasVisible = false;
+			showAreas = false;
+			extremevalues = [0, 0, 0, 0, 0, 0];
+			background = new paper.Path.Rectangle(paper.view.bounds);
+			background.fillColor = "white";
+
+
+			background.onClick = function(event) {
+				if(event.delta.x == 0 && event.delta.y == 0){
+					switch($('#Tool').val()) {
+	    		case "zoomIn":
+					for (var i = 0; i < syns.length; i++) {
+	    				let x2 = (syns[i].point.x - event.point.x)*1.4 ;
+	    				let y2 = (syns[i].point.y - event.point.y)*1.4;
+	    				syns[i].setCoordinates(x2, y2);
+	    			}
+	    			for (var i = 0; i < cliques.length; i++) {
+	    				let x2 = (cliques[i].point.x - event.point.x)*1.4;
+	    				let y2 = (cliques[i].point.y - event.point.y)*1.4;
+	    				cliques[i].setCoordinates(x2, y2);
+	    			}
+	        	break;
+	    		case "zoomOut":
+	    			for (var i = 0; i < syns.length; i++) {
+	    				let x2 = (syns[i].point.x - event.point.x)*0.7;
+	    				let y2 = (syns[i].point.y - event.point.y)*0.7 ;
+	    				syns[i].setCoordinates(x2, y2);
+	    			}
+	    			for (var i = 0; i < cliques.length; i++) {
+	    				let x2 = (cliques[i].point.x - event.point.x)*0.7;
+	    				let y2 = (cliques[i].point.y - event.point.y)*0.7;
+	    				cliques[i].setCoordinates(x2, y2);
+	    			}
+	    		break;
+	       		case "Move":
+	       		break;
+	    		default:
+	        		//code block
+				}
+
+				background.position = paper.view.center;
+				background.bounds = paper.view.bounds;
+				updateView();
+				}
+				
+	    	}
+	    	background.onMouseDrag = function(event) {
+	    		
+	    		for (var i = 0; i < syns.length; i++) {
+	    				let x2 = syns[i].point.x + event.delta.x;
+	    				let y2 = syns[i].point.y + event.delta.y ;
+	    				syns[i].setCoordinates(x2, y2);
+	    			}
+	    			for (var i = 0; i < cliques.length; i++) {
+	    				let x2 = cliques[i].point.x + event.delta.x;
+	    				let y2 = cliques[i].point.y + event.delta.y;
+	    				cliques[i].setCoordinates(x2, y2);
+	    			}
+	    		background.position = paper.view.center;
+				background.bounds = paper.view.bounds;
+				updateView();
 			}
-			background.position = paper.view.center;
-			updateView();
-    	}
 			
 			data = JSON.parse(data);
-			console.log(data);
+			document.title = data.mot;
 			
 			cliques = data.cliques;
 			syns = data.synonymes;

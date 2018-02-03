@@ -133,7 +133,7 @@ app.get('/*', function (req, res) {
   console.log("reçu requête pour : " + req);
   req = req[req.length - 1];
   if(req==""){
-    req = 'mot';
+    req = 'lien';
   }
   req = decode(req);
   if(dico.has(req)){
