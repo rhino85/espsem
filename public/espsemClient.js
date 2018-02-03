@@ -16,6 +16,49 @@ window.onload = function() {
 		var showAreas = false;
 		var axe1 = document.getElementById('axe1');
 		var axe2 = document.getElementById('axe2');
+
+
+		// For Chrome
+		window.addEventListener('mousewheel', mouseWheelEvent);
+
+		// For Firefox
+		window.addEventListener('DOMMouseScroll', mouseWheelEvent);
+
+function mouseWheelEvent(e) {
+    var delta = e.wheelDelta ? e.wheelDelta : -e.detail;
+    console.log(e);
+    var point = new paper.Point(e.offsetX, e.offsetY);
+    	point = paper.view.viewToProject(point);
+		if(delta > 0){
+			console.log("in");
+			for (var i = 0; i < syns.length; i++) {
+    				let x2 = (syns[i].point.x -point.x)*1.2 ;
+    				let y2 = (syns[i].point.y-point.y)*1.2;
+    				syns[i].setCoordinates(x2, y2);
+    			}
+    			for (var i = 0; i < cliques.length; i++) {
+    				let x2 = (cliques[i].point.x-point.x)*1.2;
+    				let y2 = (cliques[i].point.y-point.y)*1.2;
+    				cliques[i].setCoordinates(x2, y2);
+    			}
+		}else{
+			console.log("out");
+			for (var i = 0; i < syns.length; i++) {
+    				let x2 = (syns[i].point.x-point.x)*0.9;
+    				let y2 = (syns[i].point.y-point.y)*0.9 ;
+    				syns[i].setCoordinates(x2, y2);
+    			}
+    			for (var i = 0; i < cliques.length; i++) {
+    				let x2 = (cliques[i].point.x -point.x)*0.9;
+    				let y2 = (cliques[i].point.y -point.y)*0.9;
+    				cliques[i].setCoordinates(x2, y2);
+    			}
+		}
+		background.position = paper.view.center;
+		background.bounds = paper.view.bounds;
+		updateView();
+}
+		
 		
 		
 		
@@ -304,7 +347,7 @@ window.onload = function() {
 
 				this.linkWithCliques = function(thickness){
 					for (var i = 0; i < this.cliques.length; i++) {
-						this.cliques[i].pointt
+						//this.cliques[i].pointt
 					}
 				}.bind(this);
 				/*
@@ -658,7 +701,7 @@ window.onload = function() {
            		//this.pointt = new paper.CompoundPath({children : [c, d]});
            		//this.pointt.strokeWidth = 1;
            		//this.pointt.strokeColor = "black";
-           		this.pointt = new paper.Path.Circle(this.point, 1 + 0.4*Math.pow(this.mots.length, 1.5));
+           		this.pointt = new paper.Path.Circle(this.point, 1 + 0.5*Math.pow(this.mots.length, 1.3));
            		this.pointt.fillColor = this.lightblue;
            		this.pointt.visible = false;
            		this.paths = [];
@@ -928,10 +971,10 @@ window.onload = function() {
            				}
            			}
            		}
-           		if(syns[i].cliques.length < 100){
-           			syns[i].circle.scale(1 + 0.1*syns[i].cliques.length);
+           		if(syns[i].cliques.length < 40){
+           			syns[i].circle.scale(1 + 0.15*Math.pow(syns[i].cliques.length, 1.1));
            		}else{
-           			syns[i].circle.scale(1 + 0.1*100);
+           			syns[i].circle.scale(1 + 0.15*Math.pow(40, 1.1));
            		}
            		
 			}
