@@ -129,13 +129,14 @@ function mouseWheelEvent(e) {
 		$('#showcli').change(function(){
 			if(!$('#showcli').is(":checked"))
 			{
-				cliVisible = true;
+
+				cliVisible = false;
 				for (var i = 0; i < cliques.length; i++) {
 					cliques[i].cliVisible = false;
 					cliques[i].pointt.visible = false;
 				}
 			}else{
-				cliVisible = false;
+				cliVisible = true;
 				for (var i = 0; i < cliques.length; i++) {
 					cliques[i].cliVisible = true;
 					cliques[i].pointt.visible = true;
@@ -240,9 +241,10 @@ function mouseWheelEvent(e) {
 		function Syn(asyn, i){
 
 				//degradé de vert en fonction des états d'un mot
-				this.normalColor = new paper.Color(0, 0.6, 0, 0.7);
-				this.snapColor = new paper.Color(0, 0.6, 0, 0.7);
-				this.selectedColor = new paper.Color(0, 0.6, 0, 1);
+				this.normalColor = new paper.Color(0.8, 0, 0.8, 0.55);
+				//this.snapColor = new paper.Color(0, 0.6, 0, 0.7);
+				this.snapColor = new paper.Color(0.8, 0, 0.8, 0.55);
+				this.selectedColor = new paper.Color(0, 0.6, 0, 0.7);
 
 				//couleur des enveloppes
 				this.enveloppeColor1 = new paper.Color(1, 0, 0, 0.6);
@@ -272,7 +274,7 @@ function mouseWheelEvent(e) {
 				b.width = b.width*1.3;
 				b.height = b.height*1.2; 
 				this.rectangle = new paper.Path.Rectangle(b);
-				this.rectangle.strokeColor = this.selectedColor;
+				this.rectangle.strokeColor = this.snapColor;
 				this.rectangle.visible = false;
 
 				let a = new paper.Point(this.text.bounds.bottom, this.text.bounds.left)
@@ -293,6 +295,7 @@ function mouseWheelEvent(e) {
 					
 					this.text.position = new paper.Point(this.point.x, this.point.y - 30);
 					this.text.fillColor = this.snapColor;
+					this.rectangle.strokeColor = this.snapColor;
 					this.circle.fillColor = this.snapColor;
 					
 					this.rectangle.position = this.text.position;
@@ -330,6 +333,7 @@ function mouseWheelEvent(e) {
 					this.linkPointText.strokeColor = this.snapColor;
 					this.text.visible = false;
 					this.rectangle.visible = false;
+					this.showCliques(false);
 				}
 
 				this.select = function(){
@@ -337,6 +341,7 @@ function mouseWheelEvent(e) {
 					this.circle.fillColor = this.selectedColor;
 					this.text.fillColor = this.selectedColor;
 					this.rectangle.strokeColor=this.selectedColor;
+					this.linkPointText.strokeColor = this.selectedColor;
 					
 				}.bind(this);
 
@@ -345,10 +350,25 @@ function mouseWheelEvent(e) {
 					$("#clilist").html("");
 				}.bind(this);
 
-				this.linkWithCliques = function(thickness){
-					for (var i = 0; i < this.cliques.length; i++) {
-						//this.cliques[i].pointt
+				this.showCliques = function(yes){
+					if(yes){
+						for (var i = 0; i < this.cliques.length; i++) {
+						this.cliques[i].pointt.fillColor = this.enveloppeColor1;
+						this.cliques[i].rectangle.strokeColor = this.enveloppeColor1;
+						this.cliques[i].text.strokeColor = this.enveloppeColor1;
+						this.cliques[i].text.fillColor = this.enveloppeColor1;
+						this.cliques[i].linkPointText.strokeColor = this.enveloppeColor1;
 					}
+				}else{
+					for (var i = 0; i < this.cliques.length; i++) {
+						this.cliques[i].pointt.fillColor = this.cliques[i].lightblue;
+						this.cliques[i].rectangle.strokeColor = this.cliques[i].lightblue;
+						this.cliques[i].text.strokeColor = this.cliques[i].lightblue;
+						this.cliques[i].text.fillColor = this.cliques[i].lightblue;
+						this.cliques[i].linkPointText.strokeColor = this.cliques[i].lightblue;
+					}
+				}
+					
 				}.bind(this);
 				/*
 				this.unLinkWithCliques = function(){
@@ -446,6 +466,7 @@ function mouseWheelEvent(e) {
 
 
 				this.enveloppeCli = function(){
+					this.showCliques(true);
 					console.log(showAreas);
 					if(showAreas){
 						if(this.enveloppe != undefined){
@@ -851,6 +872,7 @@ function mouseWheelEvent(e) {
 					this.point.y = y;
 					this.updateLabel();
 					this.pointt.position = this.point;
+					console.log("cliVisible : " + cliVisible);
 					if(cliVisible){
 						this.pointt.visible = true;
 					}
@@ -885,6 +907,10 @@ function mouseWheelEvent(e) {
 			allAreasVisible = false;
 			showAreas = false;
 			extremevalues = [0, 0, 0, 0, 0, 0];
+
+
+
+
 			background = new paper.Path.Rectangle(paper.view.bounds);
 			background.fillColor = "white";
 
