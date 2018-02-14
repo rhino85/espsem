@@ -215,14 +215,14 @@ function mouseWheelEvent(e) {
 			if(e.which == 13) {
 				window.history.pushState("", "", '/'+$("#word").val());
 				$.ajax({
-       		url : 'data/'+$("#word").val(),
-       		type : 'GET',
-       		dataType : 'text',
-       		success : espsem,
-			error : function(resultat, statut, erreur){
-       		console.log("can't get data from serveur");
-       		}
-		});
+       				url : 'data/'+$("#word").val(),
+       				type : 'GET',
+       				dataType : 'text',
+       				success : espsem,
+					error : function(resultat, statut, erreur){
+       					console.log("can't get data from serveur");
+       				}
+				});
 			}
 		});
 
@@ -232,7 +232,7 @@ function mouseWheelEvent(e) {
        		dataType : 'text',
        		success : espsem,
 			error : function(resultat, statut, erreur){
-       		console.log("can't get data from serveur");
+       			console.log("can't get data from serveur");
        		}
 		});
 
@@ -266,6 +266,7 @@ function mouseWheelEvent(e) {
 				this.text = new paper.PointText(new paper.Point(this.point.x, this.point.y - 30));
            		this.text.visible = false;
 				this.text.justification = 'center';
+				this.text.fillColor = this.selectedColor;
 				this.text.fillColor = this.selectedColor;
 				this.text.fontSize = 17;
 				this.text.content = this.mot;
@@ -333,7 +334,7 @@ function mouseWheelEvent(e) {
 					this.linkPointText.strokeColor = this.snapColor;
 					this.text.visible = false;
 					this.rectangle.visible = false;
-					this.showCliques(false);
+					
 				}
 
 				this.select = function(){
@@ -351,21 +352,36 @@ function mouseWheelEvent(e) {
 				}.bind(this);
 
 				this.showCliques = function(yes){
+
 					if(yes){
 						for (var i = 0; i < this.cliques.length; i++) {
+							
+						this.cliques[i].isRed++;
+						console.log(this.cliques[i].isRed);
 						this.cliques[i].pointt.fillColor = this.enveloppeColor1;
 						this.cliques[i].rectangle.strokeColor = this.enveloppeColor1;
-						this.cliques[i].text.strokeColor = this.enveloppeColor1;
 						this.cliques[i].text.fillColor = this.enveloppeColor1;
 						this.cliques[i].linkPointText.strokeColor = this.enveloppeColor1;
 					}
 				}else{
 					for (var i = 0; i < this.cliques.length; i++) {
-						this.cliques[i].pointt.fillColor = this.cliques[i].lightblue;
-						this.cliques[i].rectangle.strokeColor = this.cliques[i].lightblue;
-						this.cliques[i].text.strokeColor = this.cliques[i].lightblue;
-						this.cliques[i].text.fillColor = this.cliques[i].lightblue;
-						this.cliques[i].linkPointText.strokeColor = this.cliques[i].lightblue;
+						this.cliques[i].isRed--;
+						console.log(this.cliques[i].isRed);
+						if(this.cliques[i].isRed==0){
+							if(this.cliques[i].clicked){
+								this.cliques[i].pointt.fillColor = this.cliques[i].hardblue;
+								this.cliques[i].rectangle.strokeColor = this.cliques[i].hardblue;
+								this.cliques[i].text.fillColor = this.cliques[i].hardblue;
+								this.cliques[i].linkPointText.strokeColor = this.cliques[i].hardblue;
+							}else{
+								this.cliques[i].pointt.fillColor = this.cliques[i].lightblue;
+								this.cliques[i].rectangle.strokeColor = this.cliques[i].lightblue;
+								this.cliques[i].text.fillColor = this.cliques[i].lightblue;
+								this.cliques[i].linkPointText.strokeColor = this.cliques[i].lightblue;
+							}
+						}
+						
+						
 					}
 				}
 					
@@ -394,8 +410,10 @@ function mouseWheelEvent(e) {
 				}*/
 
 				this.circle.onMouseEnter = function(){
+					
 					this.showCliquesHtml();
 					if(!this.clicked){
+						this.showCliques(true);
 						this.show();
 						if(!allAreasVisible){
 							this.enveloppeCli();
@@ -421,19 +439,21 @@ function mouseWheelEvent(e) {
 				}.bind(this);
 
 				this.circle.onMouseLeave = function(event){
+
 					if(this.enveloppe != undefined){
 						this.enveloppe.strokeWidth = 1;
 						this.enveloppe.strokeColor = this.enveloppeColor1;
 					}
 					if(!this.clicked){
+
 						this.circle.scale(0.666);
 						this.hide();
+						this.showCliques(false);
 						if(!allAreasVisible){
 							if(this.enveloppe != undefined){
 								this.enveloppe.remove();
 							}
 						}else{
-							console.log("bah");
 							this.enveloppe.strokeWidth = 1;
 							this.enveloppe.strokeColor = this.enveloppeColor1;
 						}
@@ -466,9 +486,9 @@ function mouseWheelEvent(e) {
 
 
 				this.enveloppeCli = function(){
-					this.showCliques(true);
-					console.log(showAreas);
+					
 					if(showAreas){
+
 						if(this.enveloppe != undefined){
 							this.enveloppe.remove();
 						}
@@ -481,7 +501,6 @@ function mouseWheelEvent(e) {
 							let length = Math.sqrt(Math.pow(this.cliques[0].point.x - this.cliques[1].point.x, 2) + Math.pow(this.cliques[0].point.y - this.cliques[1].point.y, 2));
 							length = length + 10;
 							var rect = new paper.Rectangle(0, 0, length, 14);
-							//on positionne le rectangle : 
 							rect.center = center;
 							rect = new paper.Path.Rectangle(rect, 7);
 							let angle =  Math.atan((this.cliques[0].point.y - this.cliques[1].point.y) / (this.cliques[0].point.x - this.cliques[1].point.x));
@@ -515,6 +534,7 @@ function mouseWheelEvent(e) {
 						this.enveloppe.strokeColor = this.enveloppeColor1;
 						if(!this.clicked){
 							this.hide();
+							this.showCliques(false);
 						}
 					}.bind(this);
 				}
@@ -537,7 +557,9 @@ function mouseWheelEvent(e) {
 						this.enveloppe.strokeColor = this.enveloppeColor1;
 					}
 					if(!showallAreas){
-						this.enveloppe.remove();
+						if(this.enveloppe!=undefined){
+								this.enveloppe.remove();
+							}
 					}
 					
 				}.bind(this);
@@ -547,10 +569,13 @@ function mouseWheelEvent(e) {
 						if(this.clicked){
 							this.clicked=false;
 							this.hide();
+							this.showCliques(false);
 							this.unselect();
 							this.circle.scale(0.666);
 							if(!allAreasVisible){
+								if(this.enveloppe!=undefined){
 								this.enveloppe.remove();
+							}
 							}
 							
 						}
@@ -572,6 +597,8 @@ function mouseWheelEvent(e) {
     				this.linkPointText.strokeColor = this.selectedColor;
 					this.linkPointText.strokeWidth = 1;
 				}
+
+				
 
 				this.span.click(function(){
 					if(this.clicked){
@@ -613,6 +640,7 @@ function mouseWheelEvent(e) {
 					if(!this.clicked){
 					this.circle.scale(0.666);
 					this.hide();
+					this.showCliques(false);
 					if(!allAreasVisible){
 						if(this.enveloppe!=undefined){
 								this.enveloppe.remove();
@@ -637,24 +665,10 @@ function mouseWheelEvent(e) {
 				}.bind(this);
 
 				this.setCoordinates = function(x, y){
-
 					this.point.x = x;
 					this.point.y = y;
-					
 					this.circle.position = this.point;
-					this.text.position = new paper.Point(this.point.x, this.point.y - 30);
-					this.hide();
-					this.unselect();
 					this.updateLabel();
-					if(this.enveloppe != undefined){
-						this.enveloppe.remove();
-					}
-					if(this.clicked){
-						this.show();
-						this.select();
-					}
-					
-
 				}.bind(this);
 
 				
@@ -676,6 +690,7 @@ function mouseWheelEvent(e) {
 						}
 					}
 				}
+				this.isRed = 0;
 				this.clicked = false;
 				this.coords = coords[this.index];
            		this.point = new paper.Point(0,0);
@@ -731,7 +746,10 @@ function mouseWheelEvent(e) {
 
            		this.show = function() {
            			this.pointt.scale(1.5);
-           			this.pointt.fillColor = this.hardblue;
+           			if(this.isRed == 0){
+           				this.pointt.fillColor = this.hardblue;
+           			}
+           			
            			//this.pointt.strokeWidth = 2;
            			this.text.position = new paper.Point(this.point.x, this.point.y - 30);
 					this.text.fillColor = this.lightblue;
@@ -749,7 +767,10 @@ function mouseWheelEvent(e) {
 
            		this.hide = function() {
            			this.pointt.scale(0.666);
-           			this.pointt.fillColor = this.lightblue;
+           			if(this.isRed == 0){
+           				this.pointt.fillColor = this.lightblue;
+           			}
+           			
            			//this.pointt.strokeWidth = 1;
            			this.labelVisible = false;
 					this.linkPointText.visible = false;
@@ -832,7 +853,7 @@ function mouseWheelEvent(e) {
            		}.bind(this);
 
            		this.pointt.onMouseEnter = function(event){
-           			//this.showWords(true);
+           			this.showWords(true);
            			if(!this.clicked){
            				this.show();
            				this.linkWithWords(0.5);
@@ -842,9 +863,7 @@ function mouseWheelEvent(e) {
 					if(this.clicked){
 						this.clicked = false;
 						this.unLinkWithWords();
-						//this.linkWithWords(0.5);
 					}else{
-						//this.linkWithWords(1);
 						this.clicked = true;
 						this.select();
 					}
@@ -872,7 +891,6 @@ function mouseWheelEvent(e) {
 					this.point.y = y;
 					this.updateLabel();
 					this.pointt.position = this.point;
-					console.log("cliVisible : " + cliVisible);
 					if(cliVisible){
 						this.pointt.visible = true;
 					}
@@ -972,6 +990,7 @@ function mouseWheelEvent(e) {
 			}
 			
 			data = JSON.parse(data);
+			console.log(data);
 			document.title = data.mot;
 			
 			cliques = data.cliques;
