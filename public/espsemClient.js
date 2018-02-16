@@ -59,12 +59,7 @@ function mouseWheelEvent(e) {
 		updateView();
 }
 		
-		
-		
-		
-
-
-    	//fonction a appeler après un changement du graphe pour redessiner si besoin les enveloppes, les liens, etc..
+		//fonction a appeler après un changement du graphe pour redessiner si besoin les enveloppes, les liens, etc..
 		function updateView() {
 			if(allAreasVisible){
 				for (var i = 0; i < syns.length; i++) {
@@ -101,17 +96,25 @@ function mouseWheelEvent(e) {
 			}
 		}
 
-		
-		
-    	
-		
-
 		$('#axe1').change(function(){
 			updateAxis();
 		});
 		$('#axe2').change(function(){
 			updateAxis();
 		});
+
+		$('#centerview').click(function(){
+			updateAxis();
+		})
+
+		$('#helpbutton').click(function(){
+			if($("#help").css("visibility") == "hidden"){
+				$("#help").css("visibility", "visible");
+			}else{
+				$("#help").css("visibility", "hidden");
+			}
+			
+		})
 
 		function updateAxis(){
 			var x = $('#axe1').val();
@@ -357,7 +360,6 @@ function mouseWheelEvent(e) {
 						for (var i = 0; i < this.cliques.length; i++) {
 							
 						this.cliques[i].isRed++;
-						console.log(this.cliques[i].isRed);
 						this.cliques[i].pointt.fillColor = this.enveloppeColor1;
 						this.cliques[i].rectangle.strokeColor = this.enveloppeColor1;
 						this.cliques[i].text.fillColor = this.enveloppeColor1;
@@ -366,7 +368,6 @@ function mouseWheelEvent(e) {
 				}else{
 					for (var i = 0; i < this.cliques.length; i++) {
 						this.cliques[i].isRed--;
-						console.log(this.cliques[i].isRed);
 						if(this.cliques[i].isRed==0){
 							if(this.cliques[i].clicked){
 								this.cliques[i].pointt.fillColor = this.cliques[i].hardblue;
@@ -527,6 +528,7 @@ function mouseWheelEvent(e) {
 						this.enveloppe.strokeColor = this.enveloppeColor2;
 						if(!this.clicked){
 							this.show();
+							this.showCliques(true);
 						}
 					}.bind(this);
 					this.enveloppe.onMouseLeave = function(){

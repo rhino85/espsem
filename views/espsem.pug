@@ -8,6 +8,8 @@ html
     script(type="text/javascript" src="paper-full.js")
     script(type="text/javascript" src="grahamScan.js")
   body
+
+    
     #lists
       #syns
         #syntitle 
@@ -19,6 +21,10 @@ html
           #clispan
         #clilist
     #ui
+      button(id="centerview")
+        | center view
+      button(id="helpbutton")
+        | help
       #Select
         #SelectXAxis
           | Axe Horizontal : 
@@ -63,4 +69,6 @@ html
         input#word(type="text" value= word)
       
     canvas#canvas
+    #help
+      | Lorem ipsum dolor sit amet, consectetur adipiscing elit. In non fermentum velit, sit amet tristique metus. Nullam quis imperdiet orci, a congue velit. 
     script(type="text/javascript" src="espsemClient.js")

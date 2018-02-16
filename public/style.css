@@ -228,4 +228,19 @@ p{
 	padding-top: 10%;
 }
 
+#help{
+	position: fixed;
+	top : 10%;
+	right : 10%;
+	width: 80%;
+	text-align: center;
+	height: 80%;
+	font-size: 2em;
+	visibility: hidden;
+	background-color: white;
+	border-width: 2px;
+	border-style: solid;
+	border-color: black;
+}
+
 
