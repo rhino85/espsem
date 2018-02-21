@@ -114,23 +114,22 @@ readFiles(function(result){});
 
 app.get('/data/*', function (req, res) {
     
-
-    req = req.originalUrl.split("/");
-    console.log("reçu requête pour : " + req);
-    req = req[req.length - 1];
-    req = decode(req);
-    console.log(req);
-    if(dico.has(req)){
-      console.log("send JSON dico.get : " + req);
-      res.json(dico.get(req));
+    
+    let mot = req.originalUrl.split("/");
+    mot = mot[mot.length - 1];
+    mot = decode(mot);
+    let date = new Date(Date.now());
+    date = date.toString();
+    console.log("Nouvelle requete espsem pour : \n mot : " + mot + "\n IP : " + req.ip + " \n date : " + date);
+    
+    if(dico.has(mot)){
+      res.json(dico.get(mot));
     }else{
       res.json("ERROR WORD DOESN'T EXIST");
     }
    });
 app.get('/*', function (req, res) {
-  
   req = req.originalUrl.split("/");
-  console.log("reçu requête pour : " + req);
   req = req[req.length - 1];
   if(req==""){
     req = 'lien';

@@ -27,8 +27,8 @@ body{
 }
 #Select{
 	position: absolute;
-	right: 0%;
-	width: 33%;
+	left: 58%;
+	width: 25%;
 	height: 90%;
 	top:5%;
 }
@@ -54,10 +54,10 @@ body{
 
 #Checkboxes{
 	position: absolute;
-	width: 33%;
+	width: 25%;
 	height: 90%;
 	left: 0%;
-	top:5%;
+	top:10%;
 }
 
 #ShowAreas{
@@ -93,7 +93,7 @@ body{
 	position: absolute;
 	width: 33%;
 	height: 90%;
-	left: 33%;
+	left: 25%;
 	top:5%;
 	font-size: 1.3em;
 	border: 1px solid gray;
@@ -241,6 +241,16 @@ p{
 	border-width: 2px;
 	border-style: solid;
 	border-color: black;
+}
+
+#helpbutton{
+	visibility: hidden;
+}
+
+#centerview{
+	position: absolute;
+	bottom : 50%;
+	right : 10%;
 }
 
 

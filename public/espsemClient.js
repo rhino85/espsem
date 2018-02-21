@@ -8,6 +8,18 @@ window.onload = function() {
 			//paper.view.rotate(180);
 		var background = new paper.Path.Rectangle(paper.view.bounds);
 			background.fillColor = "White";
+
+		
+		var axe1Line = new paper.Path.Line();
+		
+		var axe2Line = new paper.Path.Line();
+		
+
+		var arrow1 = new paper.Path();
+		var arrow2 = new paper.Path();
+		var axe1Label, axe2Label;
+			
+
 		var cliques, syns, coords;
 		var extremevalues = [0, 0, 0, 0, 0, 0];
 		var cliVisible = false;
@@ -19,18 +31,37 @@ window.onload = function() {
 
 
 		// For Chrome
-		window.addEventListener('mousewheel', mouseWheelEvent);
+		canvas.addEventListener('mousewheel', mouseWheelEvent);
 
 		// For Firefox
-		window.addEventListener('DOMMouseScroll', mouseWheelEvent);
+		canvas.addEventListener('DOMMouseScroll', mouseWheelEvent);
+
+		
 
 function mouseWheelEvent(e) {
     var delta = e.wheelDelta ? e.wheelDelta : -e.detail;
-    console.log(e);
-    var point = new paper.Point(e.offsetX, e.offsetY);
-    	point = paper.view.viewToProject(point);
+	var point = new paper.Point(e.offsetX, e.offsetY);
+		point = paper.view.viewToProject(point);
 		if(delta > 0){
 			console.log("in");
+
+			arrow1.position.x = (arrow1.position.x - point.x)*1.2;
+	    	arrow2.position.y = (arrow2.position.y - point.y)*1.2;
+
+	    	axe1Label.position.x = arrow1.position.x + 15;
+	    	axe2Label.position.y = arrow2.position.y - 15;
+			
+			axe1Line.firstSegment.point.x = (axe1Line.firstSegment.point.x - point.x)*1.2;
+	    	axe1Line.firstSegment.point.y = paper.view.bounds.bottom;
+
+	    	axe1Line.lastSegment.point.x = (axe1Line.lastSegment.point.x - point.x)*1.2;
+	    	axe1Line.lastSegment.point.y = paper.view.bounds.top;
+	    		
+	    	axe2Line.firstSegment.point.x = paper.view.bounds.left;
+	    	axe2Line.firstSegment.point.y = (axe2Line.firstSegment.point.y - point.y)*1.2;
+
+	    	axe2Line.lastSegment.point.x = paper.view.bounds.right;
+	    	axe2Line.lastSegment.point.y = (axe2Line.lastSegment.point.y - point.y)*1.2;
 			for (var i = 0; i < syns.length; i++) {
     				let x2 = (syns[i].point.x -point.x)*1.2 ;
     				let y2 = (syns[i].point.y-point.y)*1.2;
@@ -43,6 +74,24 @@ function mouseWheelEvent(e) {
     			}
 		}else{
 			console.log("out");
+			
+			arrow1.position.x = (arrow1.position.x - point.x)*0.9;
+			arrow2.position.y = (arrow2.position.y - point.y)*0.9;
+
+			axe1Label.position.x = arrow1.position.x + 15;
+	    	axe2Label.position.y = arrow2.position.y - 15;
+
+	    	axe1Line.firstSegment.point.x = (axe1Line.firstSegment.point.x - point.x)*0.9;
+	    	axe1Line.firstSegment.point.y = paper.view.bounds.bottom;
+
+	    	axe1Line.lastSegment.point.x = (axe1Line.lastSegment.point.x - point.x)*0.9;
+	    	axe1Line.lastSegment.point.y = paper.view.bounds.top;
+	    		
+	    	axe2Line.firstSegment.point.x = paper.view.bounds.left;
+	    	axe2Line.firstSegment.point.y = (axe2Line.firstSegment.point.y - point.y)*0.9;
+
+	    	axe2Line.lastSegment.point.x = paper.view.bounds.right;
+	    	axe2Line.lastSegment.point.y = (axe2Line.lastSegment.point.y - point.y)*0.9;
 			for (var i = 0; i < syns.length; i++) {
     				let x2 = (syns[i].point.x-point.x)*0.9;
     				let y2 = (syns[i].point.y-point.y)*0.9 ;
@@ -117,8 +166,33 @@ function mouseWheelEvent(e) {
 		})
 
 		function updateAxis(){
-			var x = $('#axe1').val();
-			var y = $('#axe2').val();
+
+			arrow1.position.x = 0;
+	    	arrow2.position.y = 0;
+
+	    	axe1Label.position.x = arrow1.position.x + 15;
+	    	axe2Label.position.y = arrow2.position.y - 15;
+
+			axe1Line.firstSegment.point.x = 0;
+	    	axe1Line.firstSegment.point.y = paper.view.bounds.bottom;
+
+	    	axe1Line.lastSegment.point.x = 0;
+	    	axe1Line.lastSegment.point.y = paper.view.bounds.top;
+	    		
+	    	axe2Line.firstSegment.point.x = paper.view.bounds.left;
+	    	axe2Line.firstSegment.point.y = 0;
+
+	    	axe2Line.lastSegment.point.x = paper.view.bounds.right;
+	    	axe2Line.lastSegment.point.y = 0;
+			
+			var x = parseInt($('#axe1').val());
+			var y = parseInt($('#axe2').val());
+			
+			
+
+			axe1Label.content = y + 1;
+	    	axe2Label.content = x + 1;
+
 			for (var i = 0; i < cliques.length; i++) {
 				cliques[i].setAxis(x, y);
 			}
@@ -672,13 +746,7 @@ function mouseWheelEvent(e) {
 					this.circle.position = this.point;
 					this.updateLabel();
 				}.bind(this);
-
-				
-
-				
 		}
-
-
 
 		function Cli(clique, i){
 				this.lightblue = new paper.Color(0, 0, 1, 0.5);
@@ -840,9 +908,6 @@ function mouseWheelEvent(e) {
 						this.hide();
 						this.text.visible = false;
 						this.unLinkWithWords();
-						if(allLinkVisible){
-							//this.linkWithWords(0.1);
-						}
 					}
            		}.bind(this);
 
@@ -928,17 +993,73 @@ function mouseWheelEvent(e) {
 			showAreas = false;
 			extremevalues = [0, 0, 0, 0, 0, 0];
 
-
-
-
 			background = new paper.Path.Rectangle(paper.view.bounds);
 			background.fillColor = "white";
+			
+			//affichage des axes :
+			let a = new paper.Point(0, paper.view.bounds.bottom);
+			let b = new paper.Point(0, paper.view.bounds.top);
+			axe1Line = new paper.Path.Line(a, b);
+			a = new paper.Point(paper.view.bounds.left, 0);
+			b = new paper.Point(paper.view.bounds.right, 0);
+			axe2Line = new paper.Path.Line(a, b);
+			axe1Line.strokeColor = 'black';
+			axe2Line.strokeColor = 'black';
+
+			//dessiner des petites fleches
+			arrow1 = new paper.Path();
+			arrow2 = new paper.Path();
+			arrow1.strokeColor = 'black';
+			arrow1.add(new paper.Point(-5, paper.view.bounds.top + 8));
+			arrow1.add(new paper.Point(0, paper.view.bounds.top));
+			arrow1.add(new paper.Point(5, paper.view.bounds.top + 8));
+
+			
+			arrow2.strokeColor = 'black';
+			arrow2.add(new paper.Point(paper.view.bounds.right - 8, -5));
+			arrow2.add(new paper.Point(paper.view.bounds.right, 0));
+			arrow2.add(new paper.Point(paper.view.bounds.right - 8 , 5));
+
+			axe1Label = new paper.PointText(new paper.Point(15, paper.view.bounds.top + 20));
+			axe1Label.justification = 'center';
+			axe1Label.fillColor = 'black';
+			axe1Label.fontSize = 20;
+			axe1Label.content = '2';
+
+			axe2Label = new paper.PointText(new paper.Point(paper.view.bounds.right - 5, -20));
+			axe2Label.justification = 'center';
+			axe2Label.fillColor = 'black';
+			axe2Label.fontSize = 20;
+			axe2Label.content = '1';
+
+			axe1Label.position.x = arrow1.position.x + 15;
+	    	axe2Label.position.y = arrow2.position.y - 15;
+
+			//ajouter le numéro d'axe
+			//	+interaction pour changement d'axe
 
 
 			background.onClick = function(event) {
 				if(event.delta.x == 0 && event.delta.y == 0){
 					switch($('#Tool').val()) {
 	    		case "zoomIn":
+
+	 			arrow1.position.x = (arrow1.position.x - event.point.x)*1.4;
+				arrow2.position.y = (arrow2.position.y - event.point.y)*1.4;
+
+				
+
+	    		axe1Line.firstSegment.point.x = (axe1Line.firstSegment.point.x - event.point.x)*1.4;
+	    		axe1Line.firstSegment.point.y = paper.view.bounds.bottom;
+
+	    		axe1Line.lastSegment.point.x = (axe1Line.lastSegment.point.x - event.point.x)*1.4;
+	    		axe1Line.lastSegment.point.y = paper.view.bounds.top;
+	    		
+	    		axe2Line.firstSegment.point.x = paper.view.bounds.left;
+	    		axe2Line.firstSegment.point.y = (axe2Line.firstSegment.point.y - event.point.y)*1.4;
+
+	    		axe2Line.lastSegment.point.x = paper.view.bounds.right;
+	    		axe2Line.lastSegment.point.y = (axe2Line.lastSegment.point.y - event.point.y)*1.4;
 					for (var i = 0; i < syns.length; i++) {
 	    				let x2 = (syns[i].point.x - event.point.x)*1.4 ;
 	    				let y2 = (syns[i].point.y - event.point.y)*1.4;
@@ -951,6 +1072,24 @@ function mouseWheelEvent(e) {
 	    			}
 	        	break;
 	    		case "zoomOut":
+
+				arrow1.position.x = (arrow1.position.x - event.point.x)*0.7;
+				arrow2.position.y = (arrow2.position.y - event.point.y)*0.7;
+
+				axe1Label.position.x = arrow1.position.x + 15;
+	    		axe2Label.position.y = arrow2.position.y - 15;
+	    		
+	    		axe1Line.firstSegment.point.x = (axe1Line.firstSegment.point.x - event.point.x)*0.7;
+	    		axe1Line.firstSegment.point.y = paper.view.bounds.bottom;
+
+	    		axe1Line.lastSegment.point.x = (axe1Line.lastSegment.point.x - event.point.x)*0.7;
+	    		axe1Line.lastSegment.point.y = paper.view.bounds.top;
+	    		
+	    		axe2Line.firstSegment.point.x = paper.view.bounds.left;
+	    		axe2Line.firstSegment.point.y = (axe2Line.firstSegment.point.y - event.point.y)*0.7;
+
+	    		axe2Line.lastSegment.point.x = paper.view.bounds.right;
+	    		axe2Line.lastSegment.point.y = (axe2Line.lastSegment.point.y - event.point.y)*0.7;
 	    			for (var i = 0; i < syns.length; i++) {
 	    				let x2 = (syns[i].point.x - event.point.x)*0.7;
 	    				let y2 = (syns[i].point.y - event.point.y)*0.7 ;
@@ -975,6 +1114,24 @@ function mouseWheelEvent(e) {
 				
 	    	}
 	    	background.onMouseDrag = function(event) {
+
+	    		arrow1.position.x = arrow1.position.x + event.delta.x;
+				arrow2.position.y = arrow2.position.y + event.delta.y;
+
+				axe1Label.position.x = arrow1.position.x + 15;
+	    		axe2Label.position.y = arrow2.position.y - 15;
+
+	    		axe1Line.firstSegment.point.x = axe1Line.firstSegment.point.x + event.delta.x;
+	    		axe1Line.firstSegment.point.y = paper.view.bounds.bottom;
+
+	    		axe1Line.lastSegment.point.x = axe1Line.lastSegment.point.x + event.delta.x;
+	    		axe1Line.lastSegment.point.y = paper.view.bounds.top;
+	    		
+	    		axe2Line.firstSegment.point.x = paper.view.bounds.left;
+	    		axe2Line.firstSegment.point.y = axe2Line.firstSegment.point.y + event.delta.y;
+
+	    		axe2Line.lastSegment.point.x = paper.view.bounds.right;
+	    		axe2Line.lastSegment.point.y = axe2Line.lastSegment.point.y + event.delta.y;
 	    		
 	    		for (var i = 0; i < syns.length; i++) {
 	    				let x2 = syns[i].point.x + event.delta.x;
