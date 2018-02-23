@@ -1,11 +1,59 @@
 window.onload = function() {
 
+		var motvedettediv = $('#motvedette');
+		motvedettediv.mouseenter(function(){
+			$( this ).css("border-color", "hsla(0,0%,0%, 0.2)");
+			$('#motvedette > p').css("color", "hsla(0,0%,0%, 1)");
+			$('#motvedette > #word').css("border-color", "hsla(0,0%,0%, 0.2)");
+		})
+		motvedettediv.mouseleave(function(){
+			$( this ).css("border-color", "hsla(0,0%,0%, 0)");
+			$('#motvedette > p').css("color", "hsla(0,0%,0%, 0.2)");
+			$('#motvedette > #word').css("border-color", "hsla(0,0%,0%, 0)");
+		})
+
+		
+
+    	$('#axe1').mouseenter(function(){
+			$( this ).css("border-color", "hsla(0,0%,0%, 0.2)");
+		})
+		$('#axe1').mouseleave(function(){
+			$( this ).css("border-color", "hsla(0,0%,0%, 0)");
+		})
+		$('#axe2').mouseenter(function(){
+			$( this ).css("border-color", "hsla(0,0%,0%, 0.2)");
+		})
+		$('#axe2').mouseleave(function(){
+			$( this ).css("border-color", "hsla(0,0%,0%, 0)");
+		})
+
+		$("#zoomIn").mouseenter(function(){
+			$( this ).css("border-color", "hsla(0,0%,0%, 0.3)");
+		})
+
+		$("#zoomIn").mouseleave(function(){
+			$( this ).css("border-color", "hsla(0,0%,0%, 0)");
+		})
+
+		$("#zoomOut").mouseenter(function(){
+			$( this ).css("border-color", "hsla(0,0%,0%, 0.3)");
+		})
+
+		$("#zoomOut").mouseleave(function(){
+			$( this ).css("border-color", "hsla(0,0%,0%, 0)");
+		})
+
+		$("#resetView").mouseenter(function(){
+			$( this ).css("border-color", "hsla(0,0%,0%, 0.3)");
+		})
+
+		$("#resetView").mouseleave(function(){
+			$( this ).css("border-color", "hsla(0,0%,0%, 0)");
+		})
+
 		var canvas = document.getElementById('canvas');
-			canvas.width  = window.innerWidth*0.70;
-			canvas.height = window.innerHeight*0.80;
 			paper.setup(canvas);
 			paper.view.translate(paper.view.center);
-			//paper.view.rotate(180);
 		var background = new paper.Path.Rectangle(paper.view.bounds);
 			background.fillColor = "White";
 
@@ -18,6 +66,7 @@ window.onload = function() {
 		var arrow1 = new paper.Path();
 		var arrow2 = new paper.Path();
 		var axe1Label, axe2Label;
+
 			
 
 		var cliques, syns, coords;
@@ -50,6 +99,9 @@ function mouseWheelEvent(e) {
 
 	    	axe1Label.position.x = arrow1.position.x + 15;
 	    	axe2Label.position.y = arrow2.position.y - 15;
+
+	    	$('#axe1').css({"top": paper.view.projectToView(axe2Label.position).y - 50, "left": paper.view.projectToView(axe2Label.position).x - 70});
+	    	$('#axe2').css({"top": paper.view.projectToView(axe1Label.position).y + 15, "left": paper.view.projectToView(axe1Label.position).x + 10});
 			
 			axe1Line.firstSegment.point.x = (axe1Line.firstSegment.point.x - point.x)*1.2;
 	    	axe1Line.firstSegment.point.y = paper.view.bounds.bottom;
@@ -80,6 +132,9 @@ function mouseWheelEvent(e) {
 
 			axe1Label.position.x = arrow1.position.x + 15;
 	    	axe2Label.position.y = arrow2.position.y - 15;
+
+	    	$('#axe1').css({"top": paper.view.projectToView(axe2Label.position).y - 50, "left": paper.view.projectToView(axe2Label.position).x - 70});
+	    	$('#axe2').css({"top": paper.view.projectToView(axe1Label.position).y + 15, "left": paper.view.projectToView(axe1Label.position).x + 10});
 
 	    	axe1Line.firstSegment.point.x = (axe1Line.firstSegment.point.x - point.x)*0.9;
 	    	axe1Line.firstSegment.point.y = paper.view.bounds.bottom;
@@ -173,6 +228,9 @@ function mouseWheelEvent(e) {
 	    	axe1Label.position.x = arrow1.position.x + 15;
 	    	axe2Label.position.y = arrow2.position.y - 15;
 
+	    	$('#axe1').css({"top": paper.view.projectToView(axe2Label.position).y - 50, "left": paper.view.projectToView(axe2Label.position).x - 70});
+	    	$('#axe2').css({"top": paper.view.projectToView(axe1Label.position).y + 15, "left": paper.view.projectToView(axe1Label.position).x + 10});
+
 			axe1Line.firstSegment.point.x = 0;
 	    	axe1Line.firstSegment.point.y = paper.view.bounds.bottom;
 
@@ -188,11 +246,6 @@ function mouseWheelEvent(e) {
 			var x = parseInt($('#axe1').val());
 			var y = parseInt($('#axe2').val());
 			
-			
-
-			axe1Label.content = y + 1;
-	    	axe2Label.content = x + 1;
-
 			for (var i = 0; i < cliques.length; i++) {
 				cliques[i].setAxis(x, y);
 			}
@@ -1020,106 +1073,94 @@ function mouseWheelEvent(e) {
 			arrow2.add(new paper.Point(paper.view.bounds.right, 0));
 			arrow2.add(new paper.Point(paper.view.bounds.right - 8 , 5));
 
+			//label des axes
 			axe1Label = new paper.PointText(new paper.Point(15, paper.view.bounds.top + 20));
 			axe1Label.justification = 'center';
 			axe1Label.fillColor = 'black';
 			axe1Label.fontSize = 20;
-			axe1Label.content = '2';
+			axe1Label.content = '';
 
-			axe2Label = new paper.PointText(new paper.Point(paper.view.bounds.right - 5, -20));
+			axe2Label = new paper.PointText(new paper.Point(paper.view.bounds.right - 10, -30));
 			axe2Label.justification = 'center';
 			axe2Label.fillColor = 'black';
 			axe2Label.fontSize = 20;
-			axe2Label.content = '1';
+			axe2Label.content = '';
 
 			axe1Label.position.x = arrow1.position.x + 15;
-	    	axe2Label.position.y = arrow2.position.y - 15;
+	    	axe2Label.position.y = arrow2.position.y - 20;
 
-			//ajouter le numéro d'axe
-			//	+interaction pour changement d'axe
+	    	$('#axe1').css({"border-color": "hsla(0,0%,0%, 0)", "visibility":"visible"});
+    		$('#axe2').css({"border-color": "hsla(0,0%,0%, 0)", "visibility":"visible"});
+	    	
+	    	$('#axe1').css({"top": paper.view.projectToView(axe2Label.position).y - 50, "left": paper.view.projectToView(axe2Label.position).x - 70});
+	    	$('#axe2').css({"top": paper.view.projectToView(axe1Label.position).y + 15, "left": paper.view.projectToView(axe1Label.position).x + 10});
 
+	    	$('#zoomIn').click(function(){
+	    		arrow1.position.x = (arrow1.position.x)*1.4;
+				arrow2.position.y = (arrow2.position.y)*1.4;
 
-			background.onClick = function(event) {
-				if(event.delta.x == 0 && event.delta.y == 0){
-					switch($('#Tool').val()) {
-	    		case "zoomIn":
-
-	 			arrow1.position.x = (arrow1.position.x - event.point.x)*1.4;
-				arrow2.position.y = (arrow2.position.y - event.point.y)*1.4;
-
-				
-
-	    		axe1Line.firstSegment.point.x = (axe1Line.firstSegment.point.x - event.point.x)*1.4;
+				axe1Line.firstSegment.point.x = (axe1Line.firstSegment.point.x)*1.4;
 	    		axe1Line.firstSegment.point.y = paper.view.bounds.bottom;
 
-	    		axe1Line.lastSegment.point.x = (axe1Line.lastSegment.point.x - event.point.x)*1.4;
+	    		axe1Line.lastSegment.point.x = (axe1Line.lastSegment.point.x)*1.4;
 	    		axe1Line.lastSegment.point.y = paper.view.bounds.top;
 	    		
 	    		axe2Line.firstSegment.point.x = paper.view.bounds.left;
-	    		axe2Line.firstSegment.point.y = (axe2Line.firstSegment.point.y - event.point.y)*1.4;
+	    		axe2Line.firstSegment.point.y = (axe2Line.firstSegment.point.y)*1.4;
 
 	    		axe2Line.lastSegment.point.x = paper.view.bounds.right;
-	    		axe2Line.lastSegment.point.y = (axe2Line.lastSegment.point.y - event.point.y)*1.4;
-					for (var i = 0; i < syns.length; i++) {
-	    				let x2 = (syns[i].point.x - event.point.x)*1.4 ;
-	    				let y2 = (syns[i].point.y - event.point.y)*1.4;
-	    				syns[i].setCoordinates(x2, y2);
-	    			}
-	    			for (var i = 0; i < cliques.length; i++) {
-	    				let x2 = (cliques[i].point.x - event.point.x)*1.4;
-	    				let y2 = (cliques[i].point.y - event.point.y)*1.4;
-	    				cliques[i].setCoordinates(x2, y2);
-	    			}
-	        	break;
-	    		case "zoomOut":
+	    		axe2Line.lastSegment.point.y = (axe2Line.lastSegment.point.y)*1.4;
+				for (var i = 0; i < syns.length; i++) {
+    				let x2 = (syns[i].point.x)*1.4 ;
+    				let y2 = (syns[i].point.y)*1.4;
+    				syns[i].setCoordinates(x2, y2);
+    			}
+    			for (var i = 0; i < cliques.length; i++) {
+    				let x2 = (cliques[i].point.x)*1.4;
+    				let y2 = (cliques[i].point.y)*1.4;
+    				cliques[i].setCoordinates(x2, y2);
+    			}
+	    	})
+	    	$('#zoomOut').click(function(){
+	    		arrow1.position.x = (arrow1.position.x)*0.8;
+				arrow2.position.y = (arrow2.position.y)*0.8;
 
-				arrow1.position.x = (arrow1.position.x - event.point.x)*0.7;
-				arrow2.position.y = (arrow2.position.y - event.point.y)*0.7;
-
-				axe1Label.position.x = arrow1.position.x + 15;
-	    		axe2Label.position.y = arrow2.position.y - 15;
-	    		
-	    		axe1Line.firstSegment.point.x = (axe1Line.firstSegment.point.x - event.point.x)*0.7;
+				axe1Line.firstSegment.point.x = (axe1Line.firstSegment.point.x)*0.8;
 	    		axe1Line.firstSegment.point.y = paper.view.bounds.bottom;
 
-	    		axe1Line.lastSegment.point.x = (axe1Line.lastSegment.point.x - event.point.x)*0.7;
+	    		axe1Line.lastSegment.point.x = (axe1Line.lastSegment.point.x)*0.8;
 	    		axe1Line.lastSegment.point.y = paper.view.bounds.top;
 	    		
 	    		axe2Line.firstSegment.point.x = paper.view.bounds.left;
-	    		axe2Line.firstSegment.point.y = (axe2Line.firstSegment.point.y - event.point.y)*0.7;
+	    		axe2Line.firstSegment.point.y = (axe2Line.firstSegment.point.y)*0.8;
 
 	    		axe2Line.lastSegment.point.x = paper.view.bounds.right;
-	    		axe2Line.lastSegment.point.y = (axe2Line.lastSegment.point.y - event.point.y)*0.7;
-	    			for (var i = 0; i < syns.length; i++) {
-	    				let x2 = (syns[i].point.x - event.point.x)*0.7;
-	    				let y2 = (syns[i].point.y - event.point.y)*0.7 ;
-	    				syns[i].setCoordinates(x2, y2);
-	    			}
-	    			for (var i = 0; i < cliques.length; i++) {
-	    				let x2 = (cliques[i].point.x - event.point.x)*0.7;
-	    				let y2 = (cliques[i].point.y - event.point.y)*0.7;
-	    				cliques[i].setCoordinates(x2, y2);
-	    			}
-	    		break;
-	       		case "Move":
-	       		break;
-	    		default:
-	        		//code block
-				}
-
-				background.position = paper.view.center;
-				background.bounds = paper.view.bounds;
-				updateView();
-				}
-				
-	    	}
-	    	background.onMouseDrag = function(event) {
+	    		axe2Line.lastSegment.point.y = (axe2Line.lastSegment.point.y)*0.8;
+				for (var i = 0; i < syns.length; i++) {
+    				let x2 = (syns[i].point.x)*0.8 ;
+    				let y2 = (syns[i].point.y)*0.8;
+    				syns[i].setCoordinates(x2, y2);
+    			}
+    			for (var i = 0; i < cliques.length; i++) {
+    				let x2 = (cliques[i].point.x)*0.8;
+    				let y2 = (cliques[i].point.y)*0.8;
+    				cliques[i].setCoordinates(x2, y2);
+    			}
+	    	})
+	    	$('#resetView').click(function(){
+	    		updateAxis();
+	    	})
+			
+				background.onMouseDrag = function(event) {
 
 	    		arrow1.position.x = arrow1.position.x + event.delta.x;
 				arrow2.position.y = arrow2.position.y + event.delta.y;
 
 				axe1Label.position.x = arrow1.position.x + 15;
 	    		axe2Label.position.y = arrow2.position.y - 15;
+
+	    		$('#axe1').css({"top": paper.view.projectToView(axe2Label.position).y - 50, "left": paper.view.projectToView(axe2Label.position).x - 70});
+	    		$('#axe2').css({"top": paper.view.projectToView(axe1Label.position).y + 15, "left": paper.view.projectToView(axe1Label.position).x + 10});
 
 	    		axe1Line.firstSegment.point.x = axe1Line.firstSegment.point.x + event.delta.x;
 	    		axe1Line.firstSegment.point.y = paper.view.bounds.bottom;

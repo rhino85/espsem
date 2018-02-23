@@ -7,50 +7,72 @@ body{
 
 #canvas{
 	position: absolute;
-	left:26%;
-	top: 15%;
+	left:0%;
+	top: 0%;
+	height: 100%;
+	width: 100%;
 	padding: 0;
 	margin: 0;
 
 }
+#axe1{
+	position: absolute;
+	font-size: 1.5em;
+	border-color: hsla(0,0%,0%, 0);
+	visibility: hidden;
+	background:none;
 
-#ui{
-	position: absolute;
-	width: 75%;
-	height: 14%;
-	left: 25%;
-	top:0;
-	padding: 0;
-	margin: 0;
-	border-bottom: 3px solid black;
-	border-left: 1px solid;
 }
-#Select{
+#axe2{
 	position: absolute;
-	left: 58%;
-	width: 25%;
-	height: 90%;
-	top:5%;
-}
-#SelectXAxis{
-	position: absolute;
-	top:0%;
-	right:0%;
-	padding-right: 25%;
-}
-#SelectYAxis{
-	position: absolute;
-	top:33%;
-	right:0%;
-	padding-right: 25%;
+	font-size: 1.5em;
+	border-color: hsla(0,0%,0%, 0);
+	visibility: hidden;
+	background:none;
 }
 
-#SelectTool{
+#zoomIn{
 	position: absolute;
-	right: 0;
-	top:66%;
-	padding-right: 25%;
+	right: 3%;
+	bottom : 10%;
+	border-style : solid;
+	border-width: 1px;
+	border-color: hsla(0,0%,0%,0);	
+	width: 30px;
+	height: 30px;
+	background-size: contain;
+	background-image: url("icons/zoomIn.png");
 }
+
+#zoomOut{
+	position: absolute;
+	right: 3%;
+	bottom : 5%;
+	border-style : solid;
+	border-width: 1px;
+	border-color: hsla(0,0%,0%,0);	
+	width: 30px;
+	height: 30px;
+	background-size: contain;
+	background-image: url("icons/zoomOut.png");
+}
+
+#resetView{
+	position: absolute;
+	right: 3%;
+	bottom : 15%;
+	border-style : solid;
+	border-width: 1px;
+	border-color: hsla(0,0%,0%,0);	
+	width: 30px;
+	height: 30px;
+	background-size: contain;
+	background-image: url("icons/reset.png");
+}
+
+
+
+
 
 #Checkboxes{
 	position: absolute;
@@ -86,36 +108,43 @@ body{
 	padding-right: 25%;
 }
 
-
-
-
 #motvedette{
 	position: absolute;
-	width: 33%;
-	height: 90%;
-	left: 25%;
-	top:5%;
+	width: 20%;
+	height: 10%;
+	left: 2%;
+	top:2%;
 	font-size: 1.3em;
 	border: 1px solid gray;
-	text-align: center;
-	
+	border-color: hsla(0,0%,0%, 0);
+	padding-top: 5px;
+	padding-left: 5px;
 }
-#word{
 
+#motvedette > p{
+	margin: 0;
+	color: hsla(0,0%,0%, 0.2);
+}
+
+#word{
 	position: absolute;
+	bottom: 10%;
+	left: 0%;
 	width: 80%;
 	height: 50%;
-	left: 10%;
-	bottom:12%;
 	font-size: 2em;
-	text-align: center;
+	border: 1px solid hsla(0,0%,0%, 0);
+	margin-left: 10%;
+	margin-right: 10%;
+	padding-left: 5%;
+	background:none; 
 }
 
 
 #lists{
 	position: absolute;
 	width: 25%;
-	height: 100%;
+	height: 95%;
 	top:0;
 	padding: 0;
 	margin: 0;
@@ -219,14 +248,7 @@ body{
 	font-size: 2em;
 }
 
-p{
-	position: absolute;
-	width: 100%;
-	bottom: 50%;
-	text-align: center;
-	margin: 0;
-	padding-top: 10%;
-}
+
 
 #help{
 	position: fixed;
@@ -244,7 +266,19 @@ p{
 }
 
 #helpbutton{
-	visibility: hidden;
+	visibility: visible;
+	position: fixed;
+	top : 3%;
+	right : 2%;
+	width: 5%;
+	text-align: center;
+	height: 5%;
+	font-size: 2em;
+	background:none;
+	border:none;
+	
+	
+
 }
 
 #centerview{
