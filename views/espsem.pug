@@ -9,6 +9,7 @@ html
     script(type="text/javascript" src="grahamScan.js")
   body
 
+    
     #lists
       #syns
         #syntitle 
@@ -19,10 +20,37 @@ html
           p CLIQUES DE :
           #clispan
         #clilist
-    
-      button#helpbutton
-        | ?
-      
+    #ui
+      button(id="centerview")
+        | Centrer le Graphique
+      button(id="helpbutton")
+        | help
+      #Select
+        #SelectXAxis
+          | Axe Horizontal : 
+          select#axe1
+            option(value="0" selected="") 1
+            option(value="1") 2
+            option(value="2") 3
+            option(value="3") 4
+            option(value="4") 5
+            option(value="5") 6
+        #SelectYAxis
+          | Axe Vertical :
+          select#axe2
+            option(value="0") 1
+            option(value="1" selected="") 2
+            option(value="2") 3
+            option(value="3") 4
+            option(value="4") 5
+            option(value="5") 6
+        #SelectTool
+          | Navigation :
+          select#Tool
+            option(value="none" selected="") aucun
+            option(value="zoomIn") zoomer
+            option(value="zoomOut") dézoomer
+            option(value="Move") déplacer
       #Checkboxes
         #Showcli
           | Montrer les Cliques : 
@@ -36,35 +64,11 @@ html
         #ShowAreas
           | Montrer les Enveloppes :
           input#showAreas(type="checkbox")
-
-    canvas#canvas(resize="true")
-    select#axe1
-      option(value="0" selected="") 1
-      option(value="1") 2
-      option(value="2") 3
-      option(value="3") 4
-      option(value="4") 5
-      option(value="5") 6
-    select#axe2
-      option(value="0") 1
-      option(value="1" selected="") 2
-      option(value="2") 3
-      option(value="3") 4
-      option(value="4") 5
-      option(value="5") 6
-
-    button#zoomIn
-    button#zoomOut
-    button#resetView
-    button#helpbutton
-        | ?
-
-    #motvedette 
-      p Rechercher un mot :
-      input#word(type="text" value= word)
-    
+      #motvedette 
+        | MOT VEDETTE :
+        input#word(type="text" value= word)
       
-    
+    canvas#canvas
     #help
       | Lorem ipsum dolor sit amet, consectetur adipiscing elit. In non fermentum velit, sit amet tristique metus. Nullam quis imperdiet orci, a congue velit. 
     script(type="text/javascript" src="espsemClient.js")
