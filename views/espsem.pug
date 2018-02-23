@@ -19,23 +19,6 @@ html
           p CLIQUES DE :
           #clispan
         #clilist
-    
-      button#helpbutton
-        | ?
-      
-      #Checkboxes
-        #Showcli
-          | Montrer les Cliques : 
-          input#showcli(type="checkbox")
-        #Showalllinks
-          | Montrer tout les Liens : 
-          input#showalllink(type="checkbox")
-        #ShowallAreas
-          | Montrer toutes les Enveloppes :
-          input#showallAreas(type="checkbox")
-        #ShowAreas
-          | Montrer les Enveloppes :
-          input#showAreas(type="checkbox")
 
     canvas#canvas(resize="true")
     select#axe1
@@ -58,6 +41,23 @@ html
     button#resetView
     button#helpbutton
         | ?
+    button#optionbutton
+        | options
+
+    #options
+        #Showcli
+          | Montrer les Cliques : 
+          input#showcli(type="checkbox")
+        #Showalllinks
+          | Montrer tout les Liens : 
+          input#showalllink(type="checkbox")
+        #ShowAreas
+          | Montrer les Enveloppes :
+          input#showAreas(type="checkbox")
+        #ShowallAreas
+          | Montrer toutes les Enveloppes :
+          input#showallAreas(type="checkbox")
+        
 
     #motvedette 
       p Rechercher un mot :
@@ -66,5 +66,6 @@ html
       
     
     #help
-      | Lorem ipsum dolor sit amet, consectetur adipiscing elit. In non fermentum velit, sit amet tristique metus. Nullam quis imperdiet orci, a congue velit. 
+      | Page d'information en construction
+      
     script(type="text/javascript" src="espsemClient.js")

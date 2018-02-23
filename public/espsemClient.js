@@ -2,7 +2,7 @@ window.onload = function() {
 
 		var motvedettediv = $('#motvedette');
 		motvedettediv.mouseenter(function(){
-			$( this ).css("border-color", "hsla(0,0%,0%, 0.2)");
+			//$( this ).css("border-color", "hsla(0,0%,0%, 0.2)");
 			$('#motvedette > p').css("color", "hsla(0,0%,0%, 1)");
 			$('#motvedette > #word').css("border-color", "hsla(0,0%,0%, 0.2)");
 		})
@@ -13,8 +13,7 @@ window.onload = function() {
 		})
 
 		
-
-    	$('#axe1').mouseenter(function(){
+		$('#axe1').mouseenter(function(){
 			$( this ).css("border-color", "hsla(0,0%,0%, 0.2)");
 		})
 		$('#axe1').mouseleave(function(){
@@ -49,6 +48,35 @@ window.onload = function() {
 
 		$("#resetView").mouseleave(function(){
 			$( this ).css("border-color", "hsla(0,0%,0%, 0)");
+		})
+
+		$('#axe1').change(function(){
+			updateAxis();
+		});
+		$('#axe2').change(function(){
+			updateAxis();
+		});
+
+		$('#centerview').click(function(){
+			updateAxis();
+		})
+
+		$('#helpbutton').click(function(){
+			if($("#help").css("visibility") == "hidden"){
+				$("#help").css("visibility", "visible");
+			}else{
+				$("#help").css("visibility", "hidden");
+			}
+			
+		})
+
+		$('#optionbutton').click(function(){
+			if($("#options").css("visibility") == "hidden"){
+				$("#options").css("visibility", "visible");
+			}else{
+				$("#options").css("visibility", "hidden");
+			}
+			
 		})
 
 		var canvas = document.getElementById('canvas');
@@ -100,8 +128,13 @@ function mouseWheelEvent(e) {
 	    	axe1Label.position.x = arrow1.position.x + 15;
 	    	axe2Label.position.y = arrow2.position.y - 15;
 
-	    	$('#axe1').css({"top": paper.view.projectToView(axe2Label.position).y - 50, "left": paper.view.projectToView(axe2Label.position).x - 70});
-	    	$('#axe2').css({"top": paper.view.projectToView(axe1Label.position).y + 15, "left": paper.view.projectToView(axe1Label.position).x + 10});
+	    	if((paper.view.projectToView(axe1Label.position).x + 10) < window.innerWidth - 20 && (paper.view.projectToView(axe1Label.position).x + 10) > 20){
+    			$('#axe2').css({"top": paper.view.projectToView(axe1Label.position).y + 15, "left": paper.view.projectToView(axe1Label.position).x + 10});
+    		}
+    		if((paper.view.projectToView(axe2Label.position).y - 50) < window.innerHeight -20 && (paper.view.projectToView(axe2Label.position).y - 50) > 20){
+    			$('#axe1').css({"top": paper.view.projectToView(axe2Label.position).y - 50, "left": paper.view.projectToView(axe2Label.position).x - 70});
+    		}
+	    	
 			
 			axe1Line.firstSegment.point.x = (axe1Line.firstSegment.point.x - point.x)*1.2;
 	    	axe1Line.firstSegment.point.y = paper.view.bounds.bottom;
@@ -133,8 +166,12 @@ function mouseWheelEvent(e) {
 			axe1Label.position.x = arrow1.position.x + 15;
 	    	axe2Label.position.y = arrow2.position.y - 15;
 
-	    	$('#axe1').css({"top": paper.view.projectToView(axe2Label.position).y - 50, "left": paper.view.projectToView(axe2Label.position).x - 70});
-	    	$('#axe2').css({"top": paper.view.projectToView(axe1Label.position).y + 15, "left": paper.view.projectToView(axe1Label.position).x + 10});
+    		if((paper.view.projectToView(axe1Label.position).x + 10) < window.innerWidth - 20 && (paper.view.projectToView(axe1Label.position).x + 10) > 20){
+    			$('#axe2').css({"top": paper.view.projectToView(axe1Label.position).y + 15, "left": paper.view.projectToView(axe1Label.position).x + 10});
+    		}
+    		if((paper.view.projectToView(axe2Label.position).y - 50) < window.innerHeight -20 && (paper.view.projectToView(axe2Label.position).y - 50) > 20){
+    			$('#axe1').css({"top": paper.view.projectToView(axe2Label.position).y - 50, "left": paper.view.projectToView(axe2Label.position).x - 70});
+    		}
 
 	    	axe1Line.firstSegment.point.x = (axe1Line.firstSegment.point.x - point.x)*0.9;
 	    	axe1Line.firstSegment.point.y = paper.view.bounds.bottom;
@@ -200,25 +237,7 @@ function mouseWheelEvent(e) {
 			}
 		}
 
-		$('#axe1').change(function(){
-			updateAxis();
-		});
-		$('#axe2').change(function(){
-			updateAxis();
-		});
-
-		$('#centerview').click(function(){
-			updateAxis();
-		})
-
-		$('#helpbutton').click(function(){
-			if($("#help").css("visibility") == "hidden"){
-				$("#help").css("visibility", "visible");
-			}else{
-				$("#help").css("visibility", "hidden");
-			}
-			
-		})
+		
 
 		function updateAxis(){
 
@@ -341,7 +360,6 @@ function mouseWheelEvent(e) {
 
 		
 		$(document).keypress(function(e) {
-
 			if(e.which == 13) {
 				window.history.pushState("", "", '/'+$("#word").val());
 				$.ajax({
@@ -514,28 +532,7 @@ function mouseWheelEvent(e) {
 				}
 					
 				}.bind(this);
-				/*
-				this.unLinkWithCliques = function(){
-					this.linkVisible = false;
-					for (var i = 0; i < this.paths.length; i++) {
-						this.paths[i].remove();
-					}
-					for (var i = 0; i < this.cliques.length; i++) {
-						this.cliques[i].pointt.visible = this.cliques[i].cliVisible;
-					}
-				}
-
-				this.linkWithWords = function(thickness){
-					for (var i = 0; i < this.cliques.length; i++) {
-						this.cliques[i].linkWithWords(thickness);
-					}
-				}
-
-				this.unLinkWithWords = function(thickness){
-					for (var i = 0; i < this.cliques.length; i++) {
-						this.cliques[i].unLinkWithWords();
-					}
-				}*/
+				
 
 				this.circle.onMouseEnter = function(){
 					
@@ -1087,7 +1084,7 @@ function mouseWheelEvent(e) {
 			axe2Label.content = '';
 
 			axe1Label.position.x = arrow1.position.x + 15;
-	    	axe2Label.position.y = arrow2.position.y - 20;
+	    	axe2Label.position.y = arrow2.position.y - 15;
 
 	    	$('#axe1').css({"border-color": "hsla(0,0%,0%, 0)", "visibility":"visible"});
     		$('#axe2').css({"border-color": "hsla(0,0%,0%, 0)", "visibility":"visible"});
@@ -1098,6 +1095,16 @@ function mouseWheelEvent(e) {
 	    	$('#zoomIn').click(function(){
 	    		arrow1.position.x = (arrow1.position.x)*1.4;
 				arrow2.position.y = (arrow2.position.y)*1.4;
+
+				axe1Label.position.x = arrow1.position.x + 15;
+	    		axe2Label.position.y = arrow2.position.y - 15;
+
+	    		if((paper.view.projectToView(axe1Label.position).x + 10) < window.innerWidth - 20 && (paper.view.projectToView(axe1Label.position).x + 10) > 20){
+	    			$('#axe2').css({"top": paper.view.projectToView(axe1Label.position).y + 15, "left": paper.view.projectToView(axe1Label.position).x + 10});
+	    		}
+	    		if((paper.view.projectToView(axe2Label.position).y - 50) < window.innerHeight -20 && (paper.view.projectToView(axe2Label.position).y - 50) > 20){
+	    			$('#axe1').css({"top": paper.view.projectToView(axe2Label.position).y - 50, "left": paper.view.projectToView(axe2Label.position).x - 70});
+	    		}
 
 				axe1Line.firstSegment.point.x = (axe1Line.firstSegment.point.x)*1.4;
 	    		axe1Line.firstSegment.point.y = paper.view.bounds.bottom;
@@ -1124,6 +1131,16 @@ function mouseWheelEvent(e) {
 	    	$('#zoomOut').click(function(){
 	    		arrow1.position.x = (arrow1.position.x)*0.8;
 				arrow2.position.y = (arrow2.position.y)*0.8;
+
+				axe1Label.position.x = arrow1.position.x + 15;
+	    		axe2Label.position.y = arrow2.position.y - 15;
+
+	    		if((paper.view.projectToView(axe1Label.position).x + 10) < window.innerWidth - 20 && (paper.view.projectToView(axe1Label.position).x + 10) > 20){
+	    			$('#axe2').css({"top": paper.view.projectToView(axe1Label.position).y + 15, "left": paper.view.projectToView(axe1Label.position).x + 10});
+	    		}
+	    		if((paper.view.projectToView(axe2Label.position).y - 50) < window.innerHeight -20 && (paper.view.projectToView(axe2Label.position).y - 50) > 20){
+	    			$('#axe1').css({"top": paper.view.projectToView(axe2Label.position).y - 50, "left": paper.view.projectToView(axe2Label.position).x - 70});
+	    		}
 
 				axe1Line.firstSegment.point.x = (axe1Line.firstSegment.point.x)*0.8;
 	    		axe1Line.firstSegment.point.y = paper.view.bounds.bottom;
@@ -1159,8 +1176,12 @@ function mouseWheelEvent(e) {
 				axe1Label.position.x = arrow1.position.x + 15;
 	    		axe2Label.position.y = arrow2.position.y - 15;
 
-	    		$('#axe1').css({"top": paper.view.projectToView(axe2Label.position).y - 50, "left": paper.view.projectToView(axe2Label.position).x - 70});
-	    		$('#axe2').css({"top": paper.view.projectToView(axe1Label.position).y + 15, "left": paper.view.projectToView(axe1Label.position).x + 10});
+	    		if((paper.view.projectToView(axe1Label.position).x + 10) < window.innerWidth - 20 && (paper.view.projectToView(axe1Label.position).x + 10) > 20){
+	    			$('#axe2').css({"top": paper.view.projectToView(axe1Label.position).y + 15, "left": paper.view.projectToView(axe1Label.position).x + 10});
+	    		}
+	    		if((paper.view.projectToView(axe2Label.position).y - 50) < window.innerHeight -20 && (paper.view.projectToView(axe2Label.position).y - 50) > 20){
+	    			$('#axe1').css({"top": paper.view.projectToView(axe2Label.position).y - 50, "left": paper.view.projectToView(axe2Label.position).x - 70});
+	    		}
 
 	    		axe1Line.firstSegment.point.x = axe1Line.firstSegment.point.x + event.delta.x;
 	    		axe1Line.firstSegment.point.y = paper.view.bounds.bottom;
