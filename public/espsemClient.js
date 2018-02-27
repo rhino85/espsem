@@ -61,6 +61,19 @@ window.onload = function() {
 			updateAxis();
 		})
 
+		$('#listebutton').click(function(){
+			if($("#lists").css("visibility") == "hidden"){
+				$("#lists").css("visibility", "visible");
+				motvedettediv.css("left", "27%");
+				$('#listebutton').css("left", "27%");
+			}else{
+				$("#lists").css("visibility", "hidden");
+				motvedettediv.css("left", "2%");
+				$('#listebutton').css("left", "2%");
+			}
+			
+		})
+
 		$('#helpbutton').click(function(){
 			if($("#help").css("visibility") == "hidden"){
 				$("#help").css("visibility", "visible");

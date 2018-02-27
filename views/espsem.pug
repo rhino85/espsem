@@ -9,16 +9,7 @@ html
     script(type="text/javascript" src="grahamScan.js")
   body
 
-    #lists
-      #syns
-        #syntitle 
-          p(id=1) SYNONYMES 
-        #synlist
-      #cliques
-        #clititle 
-          p CLIQUES DE :
-          #clispan
-        #clilist
+    
 
     canvas#canvas(resize="true")
     select#axe1
@@ -43,6 +34,8 @@ html
         | ?
     button#optionbutton
         | options
+    button#listebutton
+        | listes
 
     #options
         #Showcli
@@ -57,11 +50,24 @@ html
         #ShowallAreas
           | Montrer toutes les Enveloppes :
           input#showallAreas(type="checkbox")
+
+
         
 
     #motvedette 
       p Rechercher un mot :
       input#word(type="text" value= word)
+
+    #lists
+      #syns
+        #syntitle 
+          p(id=1) SYNONYMES 
+        #synlist
+      #cliques
+        #clititle 
+          p CLIQUES DE :
+          #clispan
+        #clilist
     
       
     

@@ -101,16 +101,30 @@ body{
 	
 }
 
+#listebutton{
+	visibility: visible;
+	position: fixed;
+	bottom : 3%;
+	left : 2%;
+	padding-left: 8px;
+	padding-right: 8px;
+	text-align: center;
+	font-size: 2em;
+	background:none;
+	border:none;
+}
+
 
 #lists{
-	position: absolute;
+	position: fixed;
 	width: 25%;
-	height: 95%;
+	height: 100%;
 	top:0;
 	padding: 0;
 	margin: 0;
-	border-right: 3px solid;
-
+	border-right: 2px solid;
+	visibility: hidden;
+	background-color: white;
 }
 #syns{
 	position: absolute;
@@ -176,8 +190,6 @@ body{
 	height: 14%;
 	text-align: center;
 	border-right: 1px solid;
-
-
 }
 
 #clilist{
@@ -198,7 +210,6 @@ body{
 	width: 100%;
 	height: 14%;
 	text-align: center;
-
 }
 
 #clispan{
@@ -208,8 +219,6 @@ body{
 	bottom: 25%;
 	font-size: 2em;
 }
-
-
 
 #help{
 	position: fixed;
