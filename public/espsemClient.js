@@ -736,9 +736,7 @@ function mouseWheelEvent(e) {
 				this.updateLabel= function(){
 					this.linkPointText.firstSegment.point = this.circle.position;
 					let a = new paper.Point(this.text.bounds.left, this.text.bounds.bottom);
-					//this.text.rectangle.position = this.text.position;
 					this.linkPointText.lastSegment.point = a;
-    				this.linkPointText.strokeColor = this.selectedColor;
 					this.linkPointText.strokeWidth = 1;
 				}
 
