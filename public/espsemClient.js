@@ -485,7 +485,7 @@ function mouseWheelEvent(e) {
 					for (var i = 0; i < this.cliques.length; i++) {
 						var html = "<div class='clique' id="+this.cliques[i].index+">";
 						for (var j = 0; j < this.cliques[i].mots.length; j++) {
-							html = html + this.cliques[i].mots[j].mot + ', ';
+							html = html + this.cliques[i].mots[j].mot + ' ';
 						}
 						html = html + "</div>";
 						$("#clilist").append(html);
