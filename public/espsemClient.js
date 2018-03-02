@@ -63,13 +63,16 @@ window.onload = function() {
 
 		$('#listebutton').click(function(){
 			if($("#lists").css("visibility") == "hidden"){
-				$("#lists").css("visibility", "visible");
+				$("#sidemenu").css("visibility", "visible");
 				motvedettediv.css("left", "27%");
 				$('#listebutton').css("left", "27%");
+
+
 			}else{
-				$("#lists").css("visibility", "hidden");
+				$("#sidemenu").css("visibility", "hidden");
 				motvedettediv.css("left", "2%");
 				$('#listebutton').css("left", "2%");
+
 			}
 			
 		})
@@ -93,6 +96,8 @@ window.onload = function() {
 		})
 
 		var canvas = document.getElementById('canvas');
+			canvas.width = window.innerWidth;
+			canvas.height = window.innerHeight;
 			paper.setup(canvas);
 			paper.view.translate(paper.view.center);
 		var background = new paper.Path.Rectangle(paper.view.bounds);
@@ -740,6 +745,7 @@ function mouseWheelEvent(e) {
 				
 
 				this.span.click(function(){
+
 					if(this.clicked){
 						this.clicked=false;
 						this.unselect();
@@ -747,51 +753,68 @@ function mouseWheelEvent(e) {
 							if(this.enveloppe!=undefined){
 								this.enveloppe.remove();
 							}
-							
 						}
 					}
 					else{
 						this.clicked = true;
 						this.select();
-						//this.enveloppeCli();
-					}						
+					}	
+
+
 				}.bind(this));
 
 				this.span.mouseenter(function(){
+
+					this.showCliquesHtml();
 					if(!this.clicked){
+						this.showCliques(true);
 						this.show();
-						this.showCliquesHtml();
-						//this.linkWithCliques(0.5);
 						if(!allAreasVisible){
 							this.enveloppeCli();
-						}else{
+						}
+						this.circle.scale(1.5);
+						if(this.enveloppe != undefined){
+							if(allAreasVisible){
+								this.enveloppe.strokeWidth = 2;
+								this.enveloppe.strokeColor = this.enveloppeColor2;
+							}else{
+								this.enveloppe.strokeWidth = 1;
+								this.enveloppe.strokeColor = this.enveloppeColor1;
+							}
+						}
+					}else{
+						if(this.enveloppe != undefined){
 							this.enveloppe.strokeWidth = 2;
 							this.enveloppe.strokeColor = this.enveloppeColor2;
 						}
-						this.circle.scale(1.5);
-					}else{
-						this.enveloppe.strokeWidth = 2;
-						this.enveloppe.strokeColor = this.enveloppeColor2;
-					}			
+					}	
 				}.bind(this));
 
 				this.span.mouseleave(function(){
-					if(!this.clicked){
-					this.circle.scale(0.666);
-					this.hide();
-					this.showCliques(false);
-					if(!allAreasVisible){
-						if(this.enveloppe!=undefined){
-								this.enveloppe.remove();
-							}
-					}else{
+					if(this.enveloppe != undefined){
 						this.enveloppe.strokeWidth = 1;
 						this.enveloppe.strokeColor = this.enveloppeColor1;
 					}
-				}else{
-					this.enveloppe.strokeWidth = 1;
-					this.enveloppe.strokeColor = this.enveloppeColor1;
-				}		
+					if(!this.clicked){
+
+						this.circle.scale(0.666);
+						this.hide();
+						this.showCliques(false);
+						if(!allAreasVisible){
+							if(this.enveloppe != undefined){
+								this.enveloppe.remove();
+							}
+						}else{
+							this.enveloppe.strokeWidth = 1;
+							this.enveloppe.strokeColor = this.enveloppeColor1;
+						}
+					}else{
+						if(this.enveloppe != undefined){
+							if(allAreasVisible){
+								
+							}
+						}
+				}
 				}.bind(this));
 
 				
@@ -1042,6 +1065,7 @@ function mouseWheelEvent(e) {
 			$("#clilist").html("");
 			$("#clispan").html("");
 			$("#synlist").html("");
+			$("#synspan").html($("#word").val());
 			$('#axe1').val(0);
 			$('#axe2').val(1);
 			$('#Tool').val(0);
@@ -1225,7 +1249,6 @@ function mouseWheelEvent(e) {
 			
 			data = JSON.parse(data);
 			console.log(data);
-			document.title = data.mot;
 			
 			cliques = data.cliques;
 			syns = data.synonymes;

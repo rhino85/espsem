@@ -2,7 +2,7 @@ doctype html
 html
   head
     meta(charset="utf-8")
-    title= word
+    title= "Espace Sémantique"
     script(src="jquery.js")
     link(rel="stylesheet" type="text/css" href="style.css")
     script(type="text/javascript" src="paper-full.js")
@@ -58,20 +58,31 @@ html
       p Rechercher un mot :
       input#word(type="text" value= word)
 
-    #lists
-      #syns
-        #syntitle 
-          p(id=1) SYNONYMES 
+    #sidemenu
+      #syntitle 
+        | SYNONYMES DE
+        #synspan
+      #lists
         #synlist
-      #cliques
-        #clititle 
-          p CLIQUES DE :
-          #clispan
-        #clilist
+        #cliques
+          #clititle 
+            | CLIQUES DE :
+            #clispan
+          #clilist
     
       
     
     #help
-      | Page d'information en construction
+      p Cette page permet d'explorer des visualisations 2D de l'espace sémantique d'un mot  ; les mots sont disposés sur le plan selon leur sens.
+      p La taille d'un point correspond à son importance dans l'univers sémantique du mot recherché ; un point de grande taille a beaucoup de synonymes en commun avec le "mot vedette".
+      p Vous pouvez vous déplacer dans le plan par cliquer-déplacer, zoomer avec la molette de votre souris ou avec les boutons en bas à droite.
+      p L'interface propose plusieurs options (bouton "option" en haut à droite) : 
+      p Montrer les cliques : affiche les cliques (en bleu) sur le plan, les cliques regroupent les mots synonymes entre eux.
+      p Montrer tout les liens : affiche les liens entre les mots et leur cliques.
+      p Montrer les enveloppes : permet l'affichage des enveloppes sur le plan lorsqu'on interagit avec un mot, l'enveloppe entoure les cliques associées à ce mot, elle délimite ainsi une "zone sémantique" correspondant à ce mot.
+      p Montrer toutes les enveloppes : affiche toutes les enveloppes sur le plan.
+      p L'espace sémantique du DES est généré en 6 dimension, par défaut il apparait selon les axes les plus pertinents (axe 1 et 2), mais vous pouvez naviguer selon d'autres axes en cliquant sur leur numéro.
+      p Le bouton "listes" en bas à gauche permet d'afficher la listes des synonymes du mot recherché ainsi que leur clique.
+      p Enfin, la barre de recherche en haut à gauche permet d'acceder à l'espace sémantique d'un nouveau mot.
       
     script(type="text/javascript" src="espsemClient.js")

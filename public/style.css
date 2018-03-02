@@ -7,16 +7,15 @@ body{
 
 #canvas{
 	position: absolute;
-	left:0%;
+	right:0%;
 	top: 0%;
-	height: 100%;
-	width: 100%;
 	padding: 0;
 	margin: 0;
 
 }
 #axe1{
-	position: absolute;
+	position: fixed;
+	right: 70px;
 	font-size: 1.5em;
 	border-color: hsla(0,0%,0%, 0);
 	visibility: hidden;
@@ -115,38 +114,76 @@ body{
 }
 
 
-#lists{
+#sidemenu{
 	position: fixed;
 	width: 25%;
 	height: 100%;
 	top:0;
 	padding: 0;
 	margin: 0;
-	border-right: 2px solid;
+	border-right: 1px solid;
 	visibility: hidden;
 	background-color: white;
 }
-#syns{
-	position: absolute;
+
+#syntitle{
+	position: relative;
 	top:0;
+	width: 100%;
+	text-align: center;
+	border-right: 1px solid;
+	border-bottom: 1px solid;
+	padding-top: 20px;
+	padding-bottom: 20px;
+}
+
+#syntitle > p{
+	margin: 0;
+}
+#synspan{
+	position: relative;
+	text-align: center;
+	font-size: 2em;
+}
+
+#lists{
+	position: relative;
+	width: 100%;
 	height: 100%;
-	width: 35%;
+}
+
+#synlist{
+	overflow-y: scroll;
+	position: relative;
+	width: 33.3%;
+	max-height: 90%;
 	left: 0;
+	top: 0;
+	border-right: solid 1px;
+	margin: 0;
 }
-#cliques{
-	position: absolute;
-	top:0;
-	height: 100%;
-	width: 65%;
-	right: 0;
-}
+
 
 .syn{
 	position: relative;
 	padding-top: 5px;
 	width: 100%;
 	text-align: center;
-	}
+}
+
+.syn>span{
+	position: relative;
+}
+
+#cliques{
+	position: absolute;
+	top:0;
+	height: 100%;
+	width: 66.6%;
+	right: 0;
+}
+
+
 
 .clique{
 	position: relative;
@@ -161,36 +198,11 @@ body{
 	border-style: solid;
 }
 
-.syn>input{
-	position: relative;
-	left:10%;
-}
-.syn>span{
-	position: relative;
-	
-}
 
-#synlist{
-	overflow-y: scroll;
-	position: absolute;
-	top: 14%;
-	width: 100%;
-	max-height: 86%;
-	left: 0;
-	border-top: 1px;
-	border-right: 1px;
-	border-left: 0;
-	border-bottom: 0px;
-	border-style: solid;
-}
 
-#syntitle{
-	position: absolute;
-	width: 100%;
-	height: 14%;
-	text-align: center;
-	border-right: 1px solid;
-}
+
+
+
 
 #clilist{
 	overflow-y: scroll;
@@ -208,20 +220,21 @@ body{
 #clititle{
 	position: relative;
 	width: 100%;
-	height: 14%;
+	padding-top: 20px;
+	padding-bottom: 20px;
 	text-align: center;
 }
 
 #clispan{
-	position: absolute;
-	width: 100%;
+	position: relative;
 	text-align: center;
-	bottom: 25%;
 	font-size: 2em;
 }
 
 #help{
 	position: fixed;
+	box-sizing: border-box;
+	overflow-y: scroll;
 	top : 10%;
 	right : 10%;
 	width: 80%;
@@ -233,6 +246,8 @@ body{
 	border-width: 2px;
 	border-style: solid;
 	border-color: black;
+	padding-left: 10%;
+	padding-right: 10%; 
 }
 
 #helpbutton{
@@ -252,7 +267,6 @@ body{
 	position: fixed;
 	top : 15%;
 	right : 2%;
-	
 	text-align: right;
 	font-size: 1em;
 	visibility: hidden;
