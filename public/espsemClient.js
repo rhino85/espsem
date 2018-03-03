@@ -961,7 +961,7 @@ window.onload = function() {
 					this.rectangle.position = this.text.position;
 					this.text.visible = true;
 					this.rectangle.visible = true;
-					
+
 					//affiche le lien entre le cercle et l'étiquette
 					this.linkPointText.firstSegment.point = this.point;
 					this.linkPointText.lastSegment.point = new paper.Point(this.text.bounds.left, this.text.bounds.bottom);
@@ -1242,6 +1242,9 @@ window.onload = function() {
     				let y2 = (cliques[i].point.y)*1.4;
     				cliques[i].setCoordinates(x2, y2);
     			}
+    			background.position = paper.view.center;
+	    		background.bounds = paper.view.bounds;
+	    		updateView();
 	    	})
 
 
@@ -1281,6 +1284,9 @@ window.onload = function() {
     				let y2 = (cliques[i].point.y)*0.8;
     				cliques[i].setCoordinates(x2, y2);
     			}
+    			background.position = paper.view.center;
+	    		background.bounds = paper.view.bounds;
+	    		updateView();
 	    	})
 
 	    	//evenement : clique sur le bouton reset view
