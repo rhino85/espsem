@@ -222,7 +222,11 @@ window.onload = function() {
 		})
 
 
-		
+		canvas.addEventListener('click', function(){
+			if($("#help").css("visibility") == "visible"){
+				$("#help").css("visibility", "hidden");
+			}
+		})
 		canvas.addEventListener('mousewheel', mouseWheelEvent); // For Chrome				//evenement molette souris
 		canvas.addEventListener('DOMMouseScroll', mouseWheelEvent); // For Firefox			//evenement molette souris
 
