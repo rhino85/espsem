@@ -104,6 +104,7 @@ window.onload = function() {
 
 		$('#listebutton').click(function(){								//evenement clique sur bouton "liste"
 			if($("#lists").css("visibility") == "hidden"){				//si la div "lists" est cachée
+				$('#listebutton').html("<< listes");
 				$("#sidemenu").css("visibility", "visible");				//la div "lists" devient visible
 				motvedettediv.css("left", "27%");							//on décale la div de recherche de mot
 				$('#listebutton').css("left", "27%");						//on décale le bouton "listes"
@@ -111,6 +112,7 @@ window.onload = function() {
 
 			}else{														//comportement inverse si la div "lists" est déjà visible
 				$("#sidemenu").css("visibility", "hidden");
+				$('#listebutton').html("listes");
 				motvedettediv.css("left", "2%");
 				$('#listebutton').css("left", "2%");
 
@@ -232,53 +234,11 @@ window.onload = function() {
 			point = paper.view.viewToProject(point);
 			if(delta > 0){ 																	//zoom in
 				
-				//deplacement des axes et de leur labels :
-				arrow1.position.x = (arrow1.position.x - point.x)*1.2;
-		    	arrow2.position.y = (arrow2.position.y - point.y)*1.2;
-
-		    	axe1Label.position.x = arrow1.position.x + 15;
-		    	axe2Label.position.y = arrow2.position.y - 15;
-
-		    	if((paper.view.projectToView(axe1Label.position).x + 10) < window.innerWidth - 20 && (paper.view.projectToView(axe1Label.position).x + 10) > 20){
-	    			$('#axe2').css({"top": paper.view.projectToView(axe1Label.position).y + 15, "left": paper.view.projectToView(axe1Label.position).x + 10});
-	    		}
-	    		if((paper.view.projectToView(axe2Label.position).y - 50) < window.innerHeight -20 && (paper.view.projectToView(axe2Label.position).y - 50) > 20){
-	    			$('#axe1').css({"top": paper.view.projectToView(axe2Label.position).y - 50, "left": paper.view.projectToView(axe2Label.position).x - 70});
-	    		}
-		    	
-				axe1Line.firstSegment.point.x = (axe1Line.firstSegment.point.x - point.x)*1.2;
-		    	axe1Line.firstSegment.point.y = paper.view.bounds.bottom;
-
-		    	axe1Line.lastSegment.point.x = (axe1Line.lastSegment.point.x - point.x)*1.2;
-		    	axe1Line.lastSegment.point.y = paper.view.bounds.top;
-		    		
-		    	axe2Line.firstSegment.point.x = paper.view.bounds.left;
-		    	axe2Line.firstSegment.point.y = (axe2Line.firstSegment.point.y - point.y)*1.2;
-
-		    	axe2Line.lastSegment.point.x = paper.view.bounds.right;
-		    	axe2Line.lastSegment.point.y = (axe2Line.lastSegment.point.y - point.y)*1.2;
-
-		    	//calcul et affectation des nouvelles coordonnées pour les objet syn
-				for (var i = 0; i < syns.length; i++) {
-	    				let x2 = (syns[i].point.x -point.x)*1.2 ;
-	    				let y2 = (syns[i].point.y-point.y)*1.2;
-	    				syns[i].setCoordinates(x2, y2);
-	    			}
-
-		    	//calcul et affectation des nouvelles coordonnées pour les objet cli
-    			for (var i = 0; i < cliques.length; i++) {
-    				let x2 = (cliques[i].point.x-point.x)*1.2;
-    				let y2 = (cliques[i].point.y-point.y)*1.2;
-    				cliques[i].setCoordinates(x2, y2);
-    			}
-
-			}else{ 																			//zoom out meme principe que pour zoom in
-				
-				arrow1.position.x = (arrow1.position.x - point.x)*0.9;
-				arrow2.position.y = (arrow2.position.y - point.y)*0.9;
+				arrow1.position.x = (arrow1.position.x)*1.4;
+				arrow2.position.y = (arrow2.position.y)*1.4;
 
 				axe1Label.position.x = arrow1.position.x + 15;
-		    	axe2Label.position.y = arrow2.position.y - 15;
+	    		axe2Label.position.y = arrow2.position.y - 15;
 
 	    		if((paper.view.projectToView(axe1Label.position).x + 10) < window.innerWidth - 20 && (paper.view.projectToView(axe1Label.position).x + 10) > 20){
 	    			$('#axe2').css({"top": paper.view.projectToView(axe1Label.position).y + 15, "left": paper.view.projectToView(axe1Label.position).x + 10});
@@ -287,27 +247,75 @@ window.onload = function() {
 	    			$('#axe1').css({"top": paper.view.projectToView(axe2Label.position).y - 50, "left": paper.view.projectToView(axe2Label.position).x - 70});
 	    		}
 
-		    	axe1Line.firstSegment.point.x = (axe1Line.firstSegment.point.x - point.x)*0.9;
-		    	axe1Line.firstSegment.point.y = paper.view.bounds.bottom;
+				axe1Line.firstSegment.point.x = (axe1Line.firstSegment.point.x)*1.4;
+	    		axe1Line.firstSegment.point.y = paper.view.bounds.bottom;
 
-		    	axe1Line.lastSegment.point.x = (axe1Line.lastSegment.point.x - point.x)*0.9;
-		    	axe1Line.lastSegment.point.y = paper.view.bounds.top;
-		    		
-		    	axe2Line.firstSegment.point.x = paper.view.bounds.left;
-		    	axe2Line.firstSegment.point.y = (axe2Line.firstSegment.point.y - point.y)*0.9;
+	    		axe1Line.lastSegment.point.x = (axe1Line.lastSegment.point.x)*1.4;
+	    		axe1Line.lastSegment.point.y = paper.view.bounds.top;
+	    		
+	    		axe2Line.firstSegment.point.x = paper.view.bounds.left;
+	    		axe2Line.firstSegment.point.y = (axe2Line.firstSegment.point.y)*1.4;
 
-		    	axe2Line.lastSegment.point.x = paper.view.bounds.right;
-		    	axe2Line.lastSegment.point.y = (axe2Line.lastSegment.point.y - point.y)*0.9;
-
+	    		axe2Line.lastSegment.point.x = paper.view.bounds.right;
+	    		axe2Line.lastSegment.point.y = (axe2Line.lastSegment.point.y)*1.4;
 				for (var i = 0; i < syns.length; i++) {
-	    				let x2 = (syns[i].point.x-point.x)*0.9;
-	    				let y2 = (syns[i].point.y-point.y)*0.9 ;
-	    				syns[i].setCoordinates(x2, y2);
-	    			}
+    				let x2 = (syns[i].point.x)*1.4 ;
+    				let y2 = (syns[i].point.y)*1.4;
+    				syns[i].setCoordinates(x2, y2);
+    				syns[i].label.position.x = syns[i].label.position.x * 1.4;
+    				syns[i].label.position.y = syns[i].label.position.y * 1.4;
+					syns[i].updateLabel();
+    			}
     			for (var i = 0; i < cliques.length; i++) {
-    				let x2 = (cliques[i].point.x -point.x)*0.9;
-    				let y2 = (cliques[i].point.y -point.y)*0.9;
+    				let x2 = (cliques[i].point.x)*1.4;
+    				let y2 = (cliques[i].point.y)*1.4;
     				cliques[i].setCoordinates(x2, y2);
+    				cliques[i].label.position.x = cliques[i].label.position.x * 1.4;
+    				cliques[i].label.position.y = cliques[i].label.position.y * 1.4;
+					cliques[i].updateLabel();
+    			}
+
+			}else{ 																			//zoom out meme principe que pour zoom in
+				
+				arrow1.position.x = (arrow1.position.x)*0.8;
+				arrow2.position.y = (arrow2.position.y)*0.8;
+
+				axe1Label.position.x = arrow1.position.x + 15;
+	    		axe2Label.position.y = arrow2.position.y - 15;
+
+	    		if((paper.view.projectToView(axe1Label.position).x + 10) < window.innerWidth - 20 && (paper.view.projectToView(axe1Label.position).x + 10) > 20){
+	    			$('#axe2').css({"top": paper.view.projectToView(axe1Label.position).y + 15, "left": paper.view.projectToView(axe1Label.position).x + 10});
+	    		}
+	    		if((paper.view.projectToView(axe2Label.position).y - 50) < window.innerHeight -20 && (paper.view.projectToView(axe2Label.position).y - 50) > 20){
+	    			$('#axe1').css({"top": paper.view.projectToView(axe2Label.position).y - 50, "left": paper.view.projectToView(axe2Label.position).x - 70});
+	    		}
+
+				axe1Line.firstSegment.point.x = (axe1Line.firstSegment.point.x)*0.8;
+	    		axe1Line.firstSegment.point.y = paper.view.bounds.bottom;
+
+	    		axe1Line.lastSegment.point.x = (axe1Line.lastSegment.point.x)*0.8;
+	    		axe1Line.lastSegment.point.y = paper.view.bounds.top;
+	    		
+	    		axe2Line.firstSegment.point.x = paper.view.bounds.left;
+	    		axe2Line.firstSegment.point.y = (axe2Line.firstSegment.point.y)*0.8;
+
+	    		axe2Line.lastSegment.point.x = paper.view.bounds.right;
+	    		axe2Line.lastSegment.point.y = (axe2Line.lastSegment.point.y)*0.8;
+				for (var i = 0; i < syns.length; i++) {
+    				let x2 = (syns[i].point.x)*0.8 ;
+    				let y2 = (syns[i].point.y)*0.8;
+    				syns[i].setCoordinates(x2, y2);
+    				syns[i].label.position.x = syns[i].label.position.x * 0.8;
+    				syns[i].label.position.y = syns[i].label.position.y * 0.8;
+					syns[i].updateLabel();
+    			}
+    			for (var i = 0; i < cliques.length; i++) {
+    				let x2 = (cliques[i].point.x)*0.8;
+    				let y2 = (cliques[i].point.y)*0.8;
+    				cliques[i].setCoordinates(x2, y2);
+    				cliques[i].label.position.x = cliques[i].label.position.x * 0.8;
+    				cliques[i].label.position.y = cliques[i].label.position.y * 0.8;
+					cliques[i].updateLabel();
     			}
 			}
 
@@ -1236,11 +1244,17 @@ window.onload = function() {
     				let x2 = (syns[i].point.x)*1.4 ;
     				let y2 = (syns[i].point.y)*1.4;
     				syns[i].setCoordinates(x2, y2);
+    				syns[i].label.position.x = syns[i].label.position.x * 1.4;
+    				syns[i].label.position.y = syns[i].label.position.y * 1.4;
+					syns[i].updateLabel();
     			}
     			for (var i = 0; i < cliques.length; i++) {
     				let x2 = (cliques[i].point.x)*1.4;
     				let y2 = (cliques[i].point.y)*1.4;
     				cliques[i].setCoordinates(x2, y2);
+    				cliques[i].label.position.x = cliques[i].label.position.x * 1.4;
+    				cliques[i].label.position.y = cliques[i].label.position.y * 1.4;
+					cliques[i].updateLabel();
     			}
     			background.position = paper.view.center;
 	    		background.bounds = paper.view.bounds;
@@ -1278,11 +1292,17 @@ window.onload = function() {
     				let x2 = (syns[i].point.x)*0.8 ;
     				let y2 = (syns[i].point.y)*0.8;
     				syns[i].setCoordinates(x2, y2);
+    				syns[i].label.position.x = syns[i].label.position.x * 0.8;
+    				syns[i].label.position.y = syns[i].label.position.y * 0.8;
+					syns[i].updateLabel();
     			}
     			for (var i = 0; i < cliques.length; i++) {
     				let x2 = (cliques[i].point.x)*0.8;
     				let y2 = (cliques[i].point.y)*0.8;
     				cliques[i].setCoordinates(x2, y2);
+    				cliques[i].label.position.x = cliques[i].label.position.x * 0.8;
+    				cliques[i].label.position.y = cliques[i].label.position.y * 0.8;
+					cliques[i].updateLabel();
     			}
     			background.position = paper.view.center;
 	    		background.bounds = paper.view.bounds;
@@ -1327,12 +1347,24 @@ window.onload = function() {
 	    			let x2 = syns[i].point.x + event.delta.x;
 	    			let y2 = syns[i].point.y + event.delta.y ;
 	    			syns[i].setCoordinates(x2, y2);
+	    			syns[i].label.position.x += event.delta.x;
+    				syns[i].label.position.y += event.delta.y;
+					syns[i].updateLabel();
 	    		}
 	    		for (var i = 0; i < cliques.length; i++) {
 	    			let x2 = cliques[i].point.x + event.delta.x;
 	    			let y2 = cliques[i].point.y + event.delta.y;
 	    			cliques[i].setCoordinates(x2, y2);
+	    			cliques[i].label.position.x += event.delta.x;
+    				cliques[i].label.position.y += event.delta.y;
+					cliques[i].updateLabel();
 	    		}
+
+	    		/*
+					
+
+
+	    		*/
 	    		background.position = paper.view.center;
 	    		background.bounds = paper.view.bounds;
 	    		updateView();
