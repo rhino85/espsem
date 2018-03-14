@@ -1,3 +1,5 @@
+/*jshint esversion: 6 */
+
 
 window.onload = function() {
 
@@ -46,50 +48,50 @@ window.onload = function() {
 		motvedettediv.mouseenter(function(){							//evenements correspondant au passage sur la div "motvedette"
 			$('#motvedette > p').css("color", "hsla(0,0%,0%, 1)");					//modification dynamique du css avec jquery
 			$('#motvedette > #word').css("border-color", "hsla(0,0%,0%, 0.2)");		//modification dynamique du css avec jquery
-		})
+		});
 		motvedettediv.mouseleave(function(){							//evenements correspondant au passage sur la div "motvedette"
 			$( this ).css("border-color", "hsla(0,0%,0%, 0)");						//modification dynamique du css avec jquery
 			$('#motvedette > p').css("color", "hsla(0,0%,0%, 0.2)");				//modification dynamique du css avec jquery
 			$('#motvedette > #word').css("border-color", "hsla(0,0%,0%, 0)");		//modification dynamique du css avec jquery
-		})
+		});
 
 		
 		$('#axe1').mouseenter(function(){								//evenement : la souris entre dans la div "axe1"
 			$( this ).css("border-color", "hsla(0,0%,0%, 0.2)");
-		})
+		});
 		$('#axe1').mouseleave(function(){								//evenement : la souris sors de la div "axe1"
 			$( this ).css("border-color", "hsla(0,0%,0%, 0)");
-		})
+		});
 		$('#axe2').mouseenter(function(){								//evenement : la souris entre dans la div "axe2"
 			$( this ).css("border-color", "hsla(0,0%,0%, 0.2)");
-		})
+		});
 		$('#axe2').mouseleave(function(){								//evenement : la souris sors de la div "axe1"
 			$( this ).css("border-color", "hsla(0,0%,0%, 0)");
-		})
+		});
 
 		$("#zoomIn").mouseenter(function(){								//similaire bouton zoom
 			$( this ).css("border-color", "hsla(0,0%,0%, 0.3)");
-		})
+		});
 
 		$("#zoomIn").mouseleave(function(){								//similaire bouton zoom
 			$( this ).css("border-color", "hsla(0,0%,0%, 0)");
-		})
+		});
 
 		$("#zoomOut").mouseenter(function(){							//etc
 			$( this ).css("border-color", "hsla(0,0%,0%, 0.3)");
-		})
+		});
 
 		$("#zoomOut").mouseleave(function(){							//etc
 			$( this ).css("border-color", "hsla(0,0%,0%, 0)");
-		})
+		});
 
 		$("#resetView").mouseenter(function(){
 			$( this ).css("border-color", "hsla(0,0%,0%, 0.3)");
-		})
+		});
 
 		$("#resetView").mouseleave(function(){
 			$( this ).css("border-color", "hsla(0,0%,0%, 0)");
-		})
+		});
 
 		$('#axe1').change(function(){									//quand l'utilisateur utilise la liste de selection d'axe
 			updateAxis();
@@ -100,7 +102,7 @@ window.onload = function() {
 
 		$('#centerview').click(function(){
 			updateAxis();
-		})
+		});
 
 		$('#listebutton').click(function(){								//evenement clique sur bouton "liste"
 			if($("#lists").css("visibility") == "hidden"){				//si la div "lists" est cachée
@@ -118,7 +120,7 @@ window.onload = function() {
 
 			}
 			
-		})
+		});
 
 		$('#helpbutton').click(function(){								//evenement clique sur bouton help
 			if($("#help").css("visibility") == "hidden"){
@@ -127,7 +129,7 @@ window.onload = function() {
 				$("#help").css("visibility", "hidden");
 			}
 			
-		})
+		});
 
 		$('#optionbutton').click(function(){							//evenement clique sur bouton option
 			if($("#options").css("visibility") == "hidden"){
@@ -136,7 +138,7 @@ window.onload = function() {
 				$("#options").css("visibility", "hidden");
 			}
 			
-		})
+		});
 
 		$('#showcli').change(function(){								//checkbox "Montrer les cliques"
 			if(!$('#showcli').is(":checked"))
@@ -153,7 +155,7 @@ window.onload = function() {
 					cliques[i].pointt.visible = true;
 				}
 			}
-		})
+		});
 
 		$('#showAreas').change(function(){							//checkbox "montrer les enveloppes"
 			
@@ -172,12 +174,12 @@ window.onload = function() {
 				}
 				showAreas = false;
 				for (var i = 0; i < syns.length; i++) {
-					if(syns[i].enveloppe != undefined){
+					if(syns[i].enveloppe !== undefined){
 						syns[i].enveloppe.remove();
 					}
 				}
 			}
-		})
+		});
 
 		$('#showalllink').change(function(){						//checkbox "montrer tout les liens"
 			if($('#showalllink').is(":checked"))
@@ -197,7 +199,7 @@ window.onload = function() {
 					
 				}
 			}
-		})
+		});
 
 		$('#showallAreas').change(function(){						//checkbox "montrer toutes les enveloppes"
 			if(!$('#showAreas').is(":checked")){
@@ -219,14 +221,14 @@ window.onload = function() {
 					
 				}
 			}
-		})
+		});
 
 
 		canvas.addEventListener('click', function(){
 			if($("#help").css("visibility") == "visible"){
 				$("#help").css("visibility", "hidden");
 			}
-		})
+		});
 		canvas.addEventListener('mousewheel', mouseWheelEvent); // For Chrome				//evenement molette souris
 		canvas.addEventListener('DOMMouseScroll', mouseWheelEvent); // For Firefox			//evenement molette souris
 
@@ -493,7 +495,7 @@ window.onload = function() {
        		this.label = new paper.Group([this.text, this.rectangle]);
 
        		//dessin du trait reliant le point (this.circle) et l'étiquette (this.text)
-       		let a = new paper.Point(this.text.bounds.bottom, this.text.bounds.left)
+       		let a = new paper.Point(this.text.bounds.bottom, this.text.bounds.left);
        		this.linkPointText = new paper.Path.Line(this.circle.position, a);
        		this.linkPointText.strokeColor = this.normalColor;
        		this.linkPointText.visible = false;
@@ -501,7 +503,7 @@ window.onload = function() {
        		this.paths = [];
 
        		//variable pour stocker l'enveloppe du mot
-       		this.enveloppe;
+       		this.enveloppe = null;
 
        		//chargement de la liste des synonymes
        		this.html = $("<div class='syn' id='" + this.index + "'></div>").appendTo("#synlist");
@@ -532,10 +534,10 @@ window.onload = function() {
        			this.text.visible = false;
        			this.rectangle.visible = false;
 				this.circle.fillColor = this.normalColor;
-       		}
+       		};
 
 			//affiche les cliques dans la colonne clique
-       		this.showCliquesHtml = function(){
+       	this.showCliquesHtml = function(){
 				$("#clilist").html("");
        			$("#clispan").html("");
        			$("#clispan").append(this.mot);
@@ -578,7 +580,7 @@ window.onload = function() {
        			}else{ 																	//on verifie qu'on peut passer la clique en bleu, si c'est le cas on le passe en bleu
        				for (var i = 0; i < this.cliques.length; i++) {			
        					this.cliques[i].isRed--;
-       					if(this.cliques[i].isRed==0){  									//la clique repasse en bleu quand la variable isRed est à 0 (signifie qu'aucun des mots de la clique n'est selectionné)
+       					if(this.cliques[i].isRed===0){  									//la clique repasse en bleu quand la variable isRed est à 0 (signifie qu'aucun des mots de la clique n'est selectionné)
        						if(this.cliques[i].clicked){
        							this.cliques[i].pointt.fillColor = this.cliques[i].hardblue;
        							this.cliques[i].rectangle.strokeColor = this.cliques[i].hardblue;
@@ -609,7 +611,7 @@ window.onload = function() {
        					this.enveloppeCli();												//afichage de l'enveloppe
        				}
        				this.circle.scale(1.5);													//grossissement du point
-       				if(this.enveloppe != undefined){										//reaction de l'enveloppe
+       				if(this.enveloppe !== undefined){										//reaction de l'enveloppe
        					if(allAreasVisible){
        						this.enveloppe.strokeWidth = 2;
        						this.enveloppe.strokeColor = this.enveloppeColor2;
@@ -619,7 +621,7 @@ window.onload = function() {
        					}
        				}
        			}else{
-       				if(this.enveloppe != undefined){
+       				if(this.enveloppe !== undefined){
        					this.enveloppe.strokeWidth = 2;
        					this.enveloppe.strokeColor = this.enveloppeColor2;
        				}
@@ -630,7 +632,7 @@ window.onload = function() {
 			//evenement ;  la fonction déclarée se déclenche quand la souris sort dans un cercle
        		this.circle.onMouseLeave = function(event){
 
-       			if(this.enveloppe != undefined){
+       			if(this.enveloppe !== undefined){
        				this.enveloppe.strokeWidth = 1;
        				this.enveloppe.strokeColor = this.enveloppeColor1;
        			}
@@ -640,7 +642,7 @@ window.onload = function() {
        				this.hide();
        				this.showCliques(false);
        				if(!allAreasVisible){
-       					if(this.enveloppe != undefined){
+       					if(this.enveloppe !== undefined){
        						this.enveloppe.remove();
        					}
        				}else{
@@ -648,7 +650,7 @@ window.onload = function() {
        					this.enveloppe.strokeColor = this.enveloppeColor1;
        				}
        			}else{
-       				if(this.enveloppe != undefined){
+       				if(this.enveloppe !== undefined){
        					if(allAreasVisible){
 
        					}
@@ -663,7 +665,7 @@ window.onload = function() {
        				this.clicked=false;							//booleen pour garder en mémoire l'état du mot (cliqué/non-cliqué)
        				this.unselect();							
        				if(!allAreasVisible){
-       					if(this.enveloppe!=undefined){
+       					if(this.enveloppe!==undefined){
        						this.enveloppe.remove();
        					}
 					}
@@ -681,7 +683,7 @@ window.onload = function() {
 				if(showAreas){
 
 
-					if(this.enveloppe != undefined){ 										//si l'enveloppe est déjà affiché on la supprime
+					if(this.enveloppe !== undefined){ 										//si l'enveloppe est déjà affiché on la supprime
 						this.enveloppe.remove();
 					}
 
@@ -743,7 +745,7 @@ window.onload = function() {
 			
 			//evenement : fonction appelée quand on passe sur l'étiquette d'un mot
 			this.label.onMouseEnter = function(){
-				if(this.enveloppe != undefined){
+				if(this.enveloppe !== undefined){
 					this.enveloppe.strokeWidth = 2;
 					this.enveloppe.strokeColor = this.enveloppeColor2;
 				}
@@ -752,12 +754,12 @@ window.onload = function() {
 
 			//evenement : fonction appelée quand on sort de l'étiquette d'un mot
 			this.label.onMouseLeave = function(event){
-				if(this.enveloppe != undefined){
+				if(this.enveloppe !== undefined){
 					this.enveloppe.strokeWidth = 1;
 					this.enveloppe.strokeColor = this.enveloppeColor1;
 				}
 				if(!showallAreas){
-					if(this.enveloppe!=undefined){
+					if(this.enveloppe!==undefined){
 						this.enveloppe.remove();
 					}
 				}
@@ -766,7 +768,7 @@ window.onload = function() {
 			
 			//evenement : fonction appelée lorsqu'un clique sur l'étiquette d'un mot
 			this.label.onClick = function(event){
-				if(event.delta.x == 0 && event.delta.y == 0){
+				if(event.delta.x === 0 && event.delta.y === 0){
 					if(this.clicked){
 						this.clicked=false;
 						this.hide();
@@ -774,7 +776,7 @@ window.onload = function() {
 						this.unselect();
 						this.circle.scale(0.666);
 						if(!allAreasVisible){
-							if(this.enveloppe!=undefined){
+							if(this.enveloppe!==undefined){
 								this.enveloppe.remove();
 							}
 						}
@@ -797,7 +799,7 @@ window.onload = function() {
 				let a = new paper.Point(this.text.bounds.left, this.text.bounds.bottom);
 				this.linkPointText.lastSegment.point = a;
 				this.linkPointText.strokeWidth = 1;
-			}
+			};
 
 			//evenement : fonction appelée lorsqu'on clique sur un mot dans la liste de synonymes
 			this.span.click(function(){
@@ -805,7 +807,7 @@ window.onload = function() {
 					this.clicked=false;
 					this.unselect();
 					if(!allAreasVisible){
-						if(this.enveloppe!=undefined){
+						if(this.enveloppe!==undefined){
 							this.enveloppe.remove();
 						}
 					}
@@ -829,7 +831,7 @@ window.onload = function() {
 						this.enveloppeCli();
 					}
 					this.circle.scale(1.5);
-					if(this.enveloppe != undefined){
+					if(this.enveloppe !== undefined){
 						if(allAreasVisible){
 							this.enveloppe.strokeWidth = 2;
 							this.enveloppe.strokeColor = this.enveloppeColor2;
@@ -839,7 +841,7 @@ window.onload = function() {
 						}
 					}
 				}else{
-					if(this.enveloppe != undefined){
+					if(this.enveloppe !== undefined){
 						this.enveloppe.strokeWidth = 2;
 						this.enveloppe.strokeColor = this.enveloppeColor2;
 					}
@@ -849,7 +851,7 @@ window.onload = function() {
 
   			//evenement : fonction appelée lorsqu'on quitte un mot dans la liste de synonymes
 			this.span.mouseleave(function(){
-				if(this.enveloppe != undefined){
+				if(this.enveloppe !== undefined){
 					this.enveloppe.strokeWidth = 1;
 					this.enveloppe.strokeColor = this.enveloppeColor1;
 				}
@@ -859,7 +861,7 @@ window.onload = function() {
 					this.hide();
 					this.showCliques(false);
 					if(!allAreasVisible){
-						if(this.enveloppe != undefined){
+						if(this.enveloppe !== undefined){
 							this.enveloppe.remove();
 						}
 					}else{
@@ -867,7 +869,7 @@ window.onload = function() {
 						this.enveloppe.strokeColor = this.enveloppeColor1;
 					}
 				}else{
-					if(this.enveloppe != undefined){
+					if(this.enveloppe !== undefined){
 						if(allAreasVisible){
 							
 						}
@@ -930,7 +932,7 @@ window.onload = function() {
 				this.text.fontSize = 15;
 				this.labelText = "";
 				for (var i = 0; i < this.mots.length; i++) {			//boucle pour ajouter les mots dans l'étiquette
-					if(i == 0){
+					if(i === 0){
 						this.labelText = this.mots[i].mot;
 					}else{
 						this.labelText = this.labelText + " " +this.mots[i].mot;
@@ -985,7 +987,7 @@ window.onload = function() {
            		//méthode appelée lorsque la souris quitte la clique
            		this.hide = function() {
            			this.pointt.scale(0.666);								//la clique reprend sa taille normale
-           			if(this.isRed == 0){									//si la clique n'est pas rouge, elle repasse en bleu
+           			if(this.isRed === 0){									//si la clique n'est pas rouge, elle repasse en bleu
            				this.pointt.fillColor = this.lightblue;
            			}
            			
@@ -999,14 +1001,14 @@ window.onload = function() {
 
            		//méthode : passage de la clique en bleu foncé quand on clique dessus
            		this.select = function(){						
-					if(this.isRed == 0){									//si le cercle n'est pas rouge, on le colore d'un bleu plus foncé		
+					if(this.isRed === 0){									//si le cercle n'est pas rouge, on le colore d'un bleu plus foncé		
            				this.pointt.fillColor = this.hardblue;		
            				this.text.fillColor = this.hardblue;
            				this.linkPointText.strokeColor = this.hardblue;
            				this.rectangle.strokeColor = this.hardblue;
            			}
            			
-           		}
+           		};
 
            		//fonction pour redessiner le lien entre le cercle et son étiquette lorsqu'on déplace l'étiquette
            		this.updateLabel= function(){
@@ -1014,7 +1016,7 @@ window.onload = function() {
 					let a = new paper.Point(this.text.bounds.left, this.text.bounds.bottom);
 					this.linkPointText.lastSegment.point = a;
     				this.linkPointText.strokeWidth = 1;
-				}
+				};
 
 				//méthode, affiche les mots que composent la clique sur le graphe
 				this.showWords= function(yes){
@@ -1057,7 +1059,7 @@ window.onload = function() {
 
 				//evenement : fonction executée lorsqu'on clique sur l'étiquette
 				this.label.onClick = function(event) {
-					if(event.delta.x == 0 && event.delta.y == 0){
+					if(event.delta.x === 0 && event.delta.y === 0){
 						this.clicked = false;
 						this.hide();
 						this.text.visible = false;
@@ -1114,7 +1116,7 @@ window.onload = function() {
 
 				//methode appelée par la fonction globale "updateAxis()", 
 				this.setAxis = function(x, y){
-					this.setCoordinates(0.4*this.coords[x]*paper.view.bounds.width/extremevalues[x], 0.4*this.coords[y]*paper.view.bounds.height/extremevalues[y])
+					this.setCoordinates(0.4*this.coords[x]*paper.view.bounds.width/extremevalues[x], 0.4*this.coords[y]*paper.view.bounds.height/extremevalues[y]);
 
 				}.bind(this);
 
@@ -1130,7 +1132,7 @@ window.onload = function() {
 						this.pointt.visible = true;
 					}
 					
-				}
+				};
 
 		}
 		///////////////////////////////////////////////////////////////////////////////////
@@ -1263,7 +1265,7 @@ window.onload = function() {
     			background.position = paper.view.center;
 	    		background.bounds = paper.view.bounds;
 	    		updateView();
-	    	})
+	    	});
 
 
 	    	//evenement : clique sur le bouton zoom out
@@ -1311,12 +1313,12 @@ window.onload = function() {
     			background.position = paper.view.center;
 	    		background.bounds = paper.view.bounds;
 	    		updateView();
-	    	})
+	    	});
 
 	    	//evenement : clique sur le bouton reset view
 	    	$('#resetView').click(function(){
 	    		updateAxis();
-	    	})
+	    	});
 			
 
 			//evenement : cliquer-deplacer sur le graphe
