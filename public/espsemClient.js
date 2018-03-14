@@ -503,7 +503,7 @@ window.onload = function() {
        		this.paths = [];
 
        		//variable pour stocker l'enveloppe du mot
-       		this.enveloppe = null;
+       		this.enveloppe;
 
        		//chargement de la liste des synonymes
        		this.html = $("<div class='syn' id='" + this.index + "'></div>").appendTo("#synlist");
